@@ -13,45 +13,7 @@
   img {
     width: 100%;
   }
-
-  .container {
-    margin: 1rem auto;
-  }
-
-  .nav {
-    --bs-nav-link-color: black;
-  }
-
-  .header {
-    border-bottom: 1px solid #EAEDEF;
-  }
-
-  .header .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 0 auto;
-  }
-
-  .category .nav .nav-item .nav-link {
-    padding: 1rem 0.85rem;
-    font-weight: bold;
-    color: #4e5356;
-  }
-
-  .category .nav .nav-item .nav-link:hover {
-    color: #35C5F0;
-  }
-
-  .category .nav .nav-item .nav-link.active {
-    color: #35C5F0;
-    border-bottom: 2px solid #35C5F0;
-  }
-
-  .keyword {
-    display: flex;
-  }
-
+  
   .content {
     display: flex;
     flex-direction: column;
@@ -82,6 +44,9 @@
 
   .movie .title {
     font-size: 1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .movie-poster {
@@ -138,35 +103,33 @@
     color: rgb(117, 117, 117);
     background-color: rgb(0, 0, 0, 0.07);
   }
+
+  .banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #ffccbb;
+    border-radius: 0.25rem;
+  }
+
+  .banner-button {
+    padding: 0.5rem 0.75rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background-color: rgb(255, 119, 119);
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 0.875rem;
+  }
+
+  .banner-text {
+    margin: 0;
+  }
 {% endblock style %}
 
 {% block content %}
-  <section class="header">
-    <div class="container">
-      <div class="category">
-        <ul class="nav">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">홈</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">로맨스</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">액션</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">스릴러</a>
-          </li>
-        </ul>
-      </div>
-      <div class="keyword-ranking">
-        <div class="keyword">
-          <p>1</p>
-          <p>슈퍼 마리오 브라더스</p>
-        </div>
-      </div>
-    </div>
-  </section>
+  
 
   <section class="content container">
     <div class="section-header">
@@ -240,7 +203,7 @@
           <div class="movie-poster">
             <img src="https://an2-img.amz.wtchn.net/image/v2/Gj9piK9dLotP-7jFSgLuZw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9EQTNPVFl6TXprNU5qYzBNamc1TURBaWZRLkV6MlpieEtfakR4b2h1SVhvcHU5eVRBOUo2dFVrMnhOM3J2eDlMSmNaZHc" alt="">
             <div class="movie-ranking">
-              <p class="movie-ranking-number">1</p>
+              <p class="movie-ranking-number">4</p>
             </div>
           </div>
           <div class="movie-info">
@@ -280,9 +243,9 @@
     </div>
   </section>
 
-  <section class="container my-5">
-    <p>~수정예정~</p>
-    <button class="btn btn-secondary">랜덤뽑기</button>
+  <section class="banner container my-5">
+    <h5 class="banner-text">~랜덤뽑기 문구~</h5>
+    <a href="" class="banner-button">랜덤 영화 보기</a>
   </section>
 
   <section class="content container">
@@ -479,3 +442,93 @@
     </div>
   </section>
 {% endblock content %}
+
+{% block script %}
+  function Slider(target, type) {
+    let index = 1;
+    let isMoved = true;
+    const speed = 1500; // ms
+  
+    const transform = "transform " + speed / 1000 + "s";
+    let translate = (i) => "translateX(-" + 100 * i + "%)";
+    if (type === "V") {
+      translate = (i) => "translateY(-" + 100 * i + "%)";
+    }
+  
+    const slider = document.querySelector(target);
+    const sliderRects = slider.getClientRects()[0];
+    slider.style["overflow"] = "hidden";
+  
+    const container = document.createElement("div");
+    container.style["display"] = "flex";
+    container.style["flex-direction"] = type === "V" ? "column" : "row";
+    container.style["width"] = sliderRects.width + "px";
+    container.style["height"] = sliderRects.height / 10 + "px";
+    container.style["transform"] = translate(index);
+  
+    let boxes = [].slice.call(slider.children);
+    boxes = [].concat(boxes[boxes.length - 1], boxes, boxes[0]);
+  
+    const size = boxes.length;
+    for (let i = 0; i < size; i++) {
+      const box = boxes[i];
+      box.style["height"] = "100%";
+      box.style["width"] = "100%";
+      container.appendChild(box.cloneNode(true));
+    }
+  
+    container.addEventListener("transitionstart", function () {
+      isMoved = false;
+      setTimeout(() => {
+        isMoved = true;
+      }, speed);
+    });
+    container.addEventListener("transitionend", function () {
+      if (index === size - 1) {
+        index = 1;
+        container.style["transition"] = "none";
+        container.style["transform"] = translate(index);
+      }
+      if (index === 0) {
+        index = size - 1;
+        container.style["transition"] = "none";
+        container.style["transform"] = translate(index);
+      }
+    });
+  
+    slider.innerHTML = "";
+    slider.appendChild(container);
+  
+    return {
+      move: function (i) {
+        if (isMoved === true) {
+          index = i;
+          container.style["transition"] = transform;
+          container.style["transform"] = translate(index);
+        }
+      },
+      next: function () {
+        if (isMoved === true) {
+          index = (index + 1) % size;
+          container.style["transition"] = transform;
+          container.style["transform"] = translate(index);
+        }
+      },
+      prev: function () {
+        if (isMoved === true) {
+          index = index === 0 ? index + size : index;
+          index = (index - 1) % size;
+          container.style["transition"] = transform;
+          container.style["transform"] = translate(index);
+        }
+      }
+    };
+  }
+  
+  const s1 = new Slider("#slider", "V");
+  
+  setInterval(() => {
+    s1.next();
+  }, 1500)
+
+{% endblock script %}
