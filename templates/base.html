@@ -216,7 +216,7 @@
   <nav class="navbar sticky-top">
     <div class="container">
       <a class="navbar-brand">Cinephile</a>
-      <form class="d-flex search-form" role="search" method="GET" >
+      <form class="d-flex search-form" role="search" method="GET" action="{% url 'posts:search' %}">
         <input class="form-control me-2" type="search" name="title" placeholder="제목, 장르, 인물을 검색해보세요." aria-label="Search">
       </form>
       <div class="nav-right">
