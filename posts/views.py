@@ -3,14 +3,25 @@ from django.contrib.auth.decorators import login_required
 from .forms import PostForm, CommentForm
 from .models import Post, Comment
 import requests
+import json
+
 
 
 def index(request):
-    posts = Post.objects.all()
+    secrets = json.loads(open('secrets.json').read())
+    api_key = secrets['API_KEY']
+    now_playing_url = 'https://api.themoviedb.org/3/movie/now_playing?api_key={}&language=ko-KR&page=1,region=KR'.format(api_key)
+    now_playing_response = requests.get(now_playing_url).json()
+    now_playing = sorted(now_playing_response['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
+
+    top_rated_url = 'https://api.themoviedb.org/3/movie/top_rated?api_key={}&language=ko-KR&page=1'.format(api_key)
+    top_rated_response = requests.get(top_rated_url).json()
+    top_rated = sorted(top_rated_response['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
     context = {
-        'posts': posts,
+        'now_playing': now_playing,
+        'top_rated': top_rated,
     }
-    return render(request, 'posts/index.html')
+    return render(request, 'posts/index.html', context)
 
 
 # tmdb API를 이용하여 검색한 결과를 가져와 상세정보 출력
@@ -43,8 +54,6 @@ def search(request):
     }
 
     return render(request, 'posts/search.html', context)
-
-
 
 
 def movie_detail(request):
