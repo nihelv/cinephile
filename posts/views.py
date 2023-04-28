@@ -3,10 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import PostForm, CommentForm
 from .models import Post, Comment
 import requests
-<<<<<<< HEAD
 import json
-=======
->>>>>>> fed9fab8a0aaaface3759cf50fb339de73c0be66
 
 
 def index(request):
@@ -23,10 +20,7 @@ def index(request):
         'now_playing': now_playing,
         'top_rated': top_rated,
     }
-<<<<<<< HEAD
     return render(request, 'posts/index.html', context)
-=======
-    return render(request, 'posts/index.html')
 
 
 # tmdb API를 이용하여 검색한 결과를 가져와 상세정보 출력
@@ -59,9 +53,6 @@ def search(request):
     }
 
     return render(request, 'posts/search.html', context)
-
-
->>>>>>> fed9fab8a0aaaface3759cf50fb339de73c0be66
 
 
 def movie_detail(request):
