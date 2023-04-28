@@ -8,8 +8,8 @@ import json
 
 
 def index(request):
-    secrets = json.loads(open('secrets.json').read())
-    api_key = secrets['API_KEY']
+    # secrets = json.loads(open('secrets.json').read())
+    api_key = 'caea966f6e10b1fbcfc446cd0052d5cd'
     now_playing_url = 'https://api.themoviedb.org/3/movie/now_playing?api_key={}&language=ko-KR&page=1,region=KR'.format(api_key)
     now_playing_response = requests.get(now_playing_url).json()
     now_playing = sorted(now_playing_response['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
