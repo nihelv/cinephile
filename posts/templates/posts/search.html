@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% if search_data.results %}
+  {% for movie in search_data.results %}
+    <img src="{{ movie.poster_path }}" alt="이미지 없음">
+    <h2>{{ movie.title }}</h2>
+    <p>개요: {{ movie.overview }}</p>
+    <p>개봉일: {{ movie.release_date }}</p>
+    <hr>
+  {% endfor %}
+  {% else %}
+  <h2>영화를 찾을 수 없습니다.</h2>
+  {% endif %}
+{% endblock content %}
