@@ -6,6 +6,7 @@ import requests
 import json
 
 
+
 def index(request):
     secrets = json.loads(open('secrets.json').read())
     api_key = secrets['API_KEY']
