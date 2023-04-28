@@ -3,7 +3,10 @@ from django.contrib.auth.decorators import login_required
 from .forms import PostForm, CommentForm
 from .models import Post, Comment
 import requests
+<<<<<<< HEAD
 import json
+=======
+>>>>>>> fed9fab8a0aaaface3759cf50fb339de73c0be66
 
 
 def index(request):
@@ -20,7 +23,45 @@ def index(request):
         'now_playing': now_playing,
         'top_rated': top_rated,
     }
+<<<<<<< HEAD
     return render(request, 'posts/index.html', context)
+=======
+    return render(request, 'posts/index.html')
+
+
+# tmdb API를 이용하여 검색한 결과를 가져와 상세정보 출력
+def search(request):
+    TMDB_API_KEY = 'caea966f6e10b1fbcfc446cd0052d5cd'
+
+    movie_title = request.GET.get('title')
+
+    url ='https://api.themoviedb.org/3/search/movie'
+
+    params = {
+        'api_key': TMDB_API_KEY,
+        'query': movie_title,
+        'language': 'ko-kr',
+    }
+
+    response = requests.get(url, params=params)
+    search_data = response.json()
+
+    image_url = 'https://image.tmdb.org/t/p/w200' # w로 사이즈 조절
+    for movie in search_data['results']:
+        if movie['poster_path']:
+            movie['poster_path'] = image_url + movie['poster_path']
+        else:
+            movie['poster_path'] = '이미지 없음'
+
+
+    context = {
+        'search_data': search_data
+    }
+
+    return render(request, 'posts/search.html', context)
+
+
+>>>>>>> fed9fab8a0aaaface3759cf50fb339de73c0be66
 
 
 def movie_detail(request):
