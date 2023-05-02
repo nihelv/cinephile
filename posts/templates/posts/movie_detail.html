@@ -1,68 +1,92 @@
 {% extends 'base.html' %}
-{% load static %}
-
-{% block style %}
-
-{% endblock style %}
 
 {% block content %}
-
-<div class='container'>
-<div class='row row-cols-1 m-5'>
-  <img src="https://image.tmdb.org/t/p/w500{{ poster_path }}" alt="{{ title }}">
-  <h2>{{ title }}</h2>
-  <p>개봉일: {{ release_date }}</p>
-  <p>줄거리: {{ overview }}</p>    
-</div>
-
-{% comment %} 
-Carousel 구현부분
-DB에서 정보 가져옴, 옆으로 밀어 여러 게시글을 카드형태로 다룰 수 있음, 글자초과시 ... 으로 생략
-Model 이름을 임의로 card로 만들었으므로 추후 수정 필요
-{% endcomment %}
-
-<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <div class="row">
-        {% for card in cards|slice:":3" %}
-        <div class="col-md-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">{{ card.title|truncatechars:10 }}</h5>
-              <p class="card-text">{{ card.content|truncatechars:30 }}</p>
-            </div>
-          </div>
+{% comment %} 전체적으로 가운데정렬 {% endcomment %}
+<div class="container my-5">
+    <h2 class="mb-4">{{ title }}</h2>
+    <div class="row">
+        <div class="col-md-8">
+            {% if poster_path %}
+            <img src="{{ poster_path }}" class="img-fluid mb-4">
+            {% else %}
+            <p>No image available.</p>
+            {% endif %}
+            <p><strong>개봉일자:</strong> {{ release_date }}</p>
+            <p><strong>장르:</strong>
+              {% comment %} 
+              {% for genre in genres %}
+              
+              genre_dict 키로 값 찾는걸로 수정
+              
+              {{ genre.name }}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+              {% endcomment %}
+            </p>
+            </p>
+            <p><strong>줄거리:</strong> {{ overview }}</p>
         </div>
-        {% endfor %}
-      </div>
-    </div>
-    {% for card_list in cards|batch:3|slice:"1:" %}
-    <div class="carousel-item">
-      <div class="row">
-        {% for card in card_list %}
-        <div class="col-md-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">{{ card.title|truncatechars:10 }}</h5>
-              <p class="card-text">{{ card.content|truncatechars:30 }}</p>
-            </div>
-          </div>
+        {% comment %} 
+        스타일 필요/carousel적용??
+        {% endcomment %}
+        <div>
+          {% if reviews %}
+            {% for review in reviews %}
+              <div>
+                <p>{{ review.content }}</p>
+                <p>작성자: {{ review.user }}</p>
+                <p>작성일: {{ review.created_at }}</p>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p>후기가 없습니다.</p>
+          {% endif %}
         </div>
-        {% endfor %}
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
-</div>
-</div>
+      
+
+
+
+
+{% comment %}         
+        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">
+          <div class="carousel-inner">
+            {% for review in reviews %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              <div class="row">
+                {% for article in posts %}
+                <div class="col-md-4">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">{{ Post.title|truncatechars:10 }}</h5>
+                      <p class="card-text">{{ Post.content|truncatechars:30 }}</p>
+                      {% if Post.comments %}
+                      {% for comment in Post.comments %}
+                      <div class="card-text">
+                        <small>{{ comment.user.username }} - {{ comment.created_at }}</small>
+                        <p>{{ comment.body }}</p>
+                      </div>
+                      {% endfor %}
+                      {% else %}
+                      <div class="card-text">
+                        <small>No comments yet.</small>
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div> {% endcomment %}
+
 {% endblock content %}
 
