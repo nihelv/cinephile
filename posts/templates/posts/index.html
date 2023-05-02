@@ -1,138 +1,5 @@
 {% extends 'base.html' %}
 
-{% block style %}
-  img {
-    width: 100%;
-  }
-
-  .tab-content {
-    padding-bottom: 5rem;
-  }
-  
-  .content {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 0;
-  }
-
-  .title {
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-
-  .section-header {
-    padding: 1rem 0;
-  }
-
-  .movie-link:hover .movie-poster img {
-    transform: scale(1.05);
-  }
-
-  .movie-group {
-    counter-reset: ranking;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .movie {
-    width: calc(20% - 1rem);
-  }
-
-  .movie .title {
-    font-size: 1rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .movie-poster {
-    position: relative;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    margin-bottom: 0.5rem;
-    height: 365px;
-    border: 1px solid #eae9e8;
-  }
-
-  .movie-poster img {
-    transition: all 0.2s linear;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .movie-ranking {
-    width: 1.5rem;
-    height: 1.5rem;
-    text-align: center;
-    position: absolute;
-    top: 0.5rem;
-    left: 0.5rem;
-    background-color: rgb(0, 0, 0, 0.7);
-    border-radius: 0.25rem;
-  }
-
-  .movie-ranking-number {
-    color: #ffffff;
-    font-weight: bold;
-  }
-
-  .movie-ranking-number:before {
-    counter-increment: ranking;
-    content: counter(ranking);
-  }
-
-  .movie-review {
-    margin-bottom: 0.25rem;
-    font-size: 0.875rem;
-    color: #9e9e9e;
-  }
-
-  .rating {
-    color: black;
-  }
-
-  .bi-star-fill {
-    margin-right: 0.125rem;
-    font-size: 0.825rem;
-    color: #35c5f0;
-  }
-
-  .movie-category span {
-    padding: 0.125rem 0.5rem 0.25rem;
-    font-size: 0.75rem;
-    font-weight: bold;
-    border-radius: 0.25rem;
-    /* color: white;
-    background-color: rgb(255, 119, 119, 0.9); */
-    color: rgb(117, 117, 117);
-    background-color: rgb(0, 0, 0, 0.07);
-  }
-
-  .banner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background-color: #ffccbb;
-    border-radius: 0.25rem;
-  }
-
-  .banner-button {
-    padding: 0.5rem 0.75rem;
-    border: 0;
-    border-radius: 0.5rem;
-    background-color: rgb(255, 119, 119);
-    color: #ffffff;
-    font-weight: bold;
-    font-size: 0.875rem;
-  }
-
-  .banner-text {
-    margin: 0;
-  }
-{% endblock style %}
-
 {% block content %}
   <div class="tab-content" id="pills-tabContent">
     <div class="tab-pane fade show active" id="button-home" role="tabpanel" aria-labelledby="button-home-tab" tabindex="0">
@@ -143,7 +10,7 @@
         <div class="movie-group">
           {% for movie in now_playing %}
             <article class="movie">
-              <a class="movie-link" href="">
+              <a class="movie-link" href="{% url 'posts:movie_detail' movie.id %}">
                 <div class="movie-poster">
                   <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
                   <div class="movie-ranking">
@@ -153,12 +20,12 @@
                 <div class="movie-info">
                   <p class="title">{{ movie.title }}</p>
                   <div class="movie-review">
-                    <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
+                    <div class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</div>
                     <span>후기 {{ movie.vote_count }}</span>
                   </div>
                   <div class="movie-category">
-                    <span># {{ movie.genre_ids }}</span>
-                    <span># 코미디</span>
+                    <span># {{ movie.genre_ids.0 }}</span>
+                    <span># {{ movie.genre_ids.1 }}</span>
                   </div>
                 </div>
               </a>
@@ -307,28 +174,32 @@
           <h2 class="title">로맨스</h2>
         </div>
         <div class="movie-group">
-          {% for movie in now_playing %}
-            <article class="movie">
-              <a class="movie-link" href="">
-                <div class="movie-poster">
-                  <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
-                  <div class="movie-ranking">
-                    <p class="movie-ranking-number"></p>
-                  </div>
-                </div>
-                <div class="movie-info">
-                  <p class="title">{{ movie.title }}</p>
-                  <div class="movie-review">
-                    <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
-                    <span>후기 {{ movie.vote_count }}</span>
-                  </div>
-                  <div class="movie-category">
-                    <span># {{ movie.genre_ids }}</span>
-                    <span># 코미디</span>
-                  </div>
-                </div>
-              </a>
-            </article>
+          {% for movies in genre_movie_list %}
+            {% for movie in movies %}
+              {% if 10749 in movie.genre_ids %}
+                <article class="movie">
+                  <a class="movie-link" href="{% url 'posts:movie_detail' movie.id %}">
+                    <div class="movie-poster">
+                      <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
+                      {% comment %} <div class="movie-ranking">
+                        <p class="movie-ranking-number"></p>
+                      </div> {% endcomment %}
+                    </div>
+                    <div class="movie-info">
+                      <p class="title">{{ movie.title }}</p>
+                      <div class="movie-review">
+                        <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
+                        <span>후기 {{ movie.vote_count }}</span>
+                      </div>
+                      <div class="movie-category">
+                        <span># {{ movie.genre_ids }}</span>
+                        <span># 코미디</span>
+                      </div>
+                    </div>
+                  </a>
+                </article>
+              {% endif %}
+            {% endfor %}
           {% endfor %}
         </div>
       </section>
@@ -340,28 +211,32 @@
           <h2 class="title">액션</h2>
         </div>
         <div class="movie-group">
-          {% for movie in now_playing %}
-            <article class="movie">
-              <a class="movie-link" href="">
-                <div class="movie-poster">
-                  <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
-                  <div class="movie-ranking">
-                    <p class="movie-ranking-number"></p>
-                  </div>
-                </div>
-                <div class="movie-info">
-                  <p class="title">{{ movie.title }}</p>
-                  <div class="movie-review">
-                    <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
-                    <span>후기 {{ movie.vote_count }}</span>
-                  </div>
-                  <div class="movie-category">
-                    <span># {{ movie.genre_ids }}</span>
-                    <span># 코미디</span>
-                  </div>
-                </div>
-              </a>
-            </article>
+          {% for movies in genre_movie_list %}
+            {% for movie in movies %}
+              {% if 28 in movie.genre_ids %}
+                <article class="movie">
+                  <a class="movie-link" href="{% url 'posts:movie_detail' movie.id %}">
+                    <div class="movie-poster">
+                      <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
+                      {% comment %} <div class="movie-ranking">
+                        <p class="movie-ranking-number"></p>
+                      </div> {% endcomment %}
+                    </div>
+                    <div class="movie-info">
+                      <p class="title">{{ movie.title }}</p>
+                      <div class="movie-review">
+                        <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
+                        <span>후기 {{ movie.vote_count }}</span>
+                      </div>
+                      <div class="movie-category">
+                        <span># {{ movie.genre_ids }}</span>
+                        <span># 코미디</span>
+                      </div>
+                    </div>
+                  </a>
+                </article>
+              {% endif %}
+            {% endfor %}
           {% endfor %}
         </div>
       </section>
@@ -373,28 +248,32 @@
           <h2 class="title">코미디</h2>
         </div>
         <div class="movie-group">
-          {% for movie in now_playing %}
-            <article class="movie">
-              <a class="movie-link" href="">
-                <div class="movie-poster">
-                  <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
-                  <div class="movie-ranking">
-                    <p class="movie-ranking-number"></p>
-                  </div>
-                </div>
-                <div class="movie-info">
-                  <p class="title">{{ movie.title }}</p>
-                  <div class="movie-review">
-                    <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
-                    <span>후기 {{ movie.vote_count }}</span>
-                  </div>
-                  <div class="movie-category">
-                    <span># {{ movie.genre_ids }}</span>
-                    <span># 코미디</span>
-                  </div>
-                </div>
-              </a>
-            </article>
+          {% for movies in genre_movie_list %}
+            {% for movie in movies %}
+              {% if 35 in movie.genre_ids %}
+                <article class="movie">
+                  <a class="movie-link" href="{% url 'posts:movie_detail' movie.id %}">
+                    <div class="movie-poster">
+                      <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
+                      {% comment %} <div class="movie-ranking">
+                        <p class="movie-ranking-number"></p>
+                      </div> {% endcomment %}
+                    </div>
+                    <div class="movie-info">
+                      <p class="title">{{ movie.title }}</p>
+                      <div class="movie-review">
+                        <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
+                        <span>후기 {{ movie.vote_count }}</span>
+                      </div>
+                      <div class="movie-category">
+                        <span># {{ genre_dict }}</span>
+                        <span># 코미디</span>
+                      </div>
+                    </div>
+                  </a>
+                </article>
+              {% endif %}
+            {% endfor %}
           {% endfor %}
         </div>
       </section>
