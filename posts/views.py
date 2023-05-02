@@ -8,18 +8,57 @@ import json
 
 
 def index(request):
-    # secrets = json.loads(open('secrets.json').read())
+    # API_KEY = json.loads(open('secrets.json').read())
     api_key = 'caea966f6e10b1fbcfc446cd0052d5cd'
-    now_playing_url = 'https://api.themoviedb.org/3/movie/now_playing?api_key={}&language=ko-KR&page=1,region=KR'.format(api_key)
+
+    # 최신 상영작을 평점 순으로 나열하여 5개만 불러옵니다.
+    now_playing_url = 'https://api.themoviedb.org/3/movie/now_playing?api_key={}&language=ko-KR&page=1&region=KR'.format(api_key)
     now_playing_response = requests.get(now_playing_url).json()
     now_playing = sorted(now_playing_response['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
 
+    # 명작 영화를 평점 순으로 나열하여 5개만 불러옵니다.
     top_rated_url = 'https://api.themoviedb.org/3/movie/top_rated?api_key={}&language=ko-KR&page=1'.format(api_key)
     top_rated_response = requests.get(top_rated_url).json()
     top_rated = sorted(top_rated_response['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
+
+    # 장르 번호를 딕셔너리로 만들어두었으니 활용하시면 됩니다. ^^
+    genre_dict = {
+        28: '액션',
+        12: '모험',
+        16: '애니메이션',
+        35: '코미디',
+        80: '범죄',
+        99: '다큐멘터리',
+        18: '드라마',
+        10751: '가족',
+        14: '판타지',
+        36: '역사',
+        27: '공포',
+        10402: '음악',
+        9648: '미스터리',
+        10749: '로맨스',
+        878: 'SF',
+        10770: 'TV 영화',
+        53: '스릴러',
+        10752: '전쟁',
+        37: '서부'
+    }
+    
+    # 장르별 영화를 불러옵니다.
+    # 템플릿에서 genre_ids에 원하는 장르 번호가 있는지 확인하여 장르별 영화를 불러올 수 있습니다.
+    # 단, 평균적으로 5개 이상의 장르별 영화를 불러오려면 여러 개 페이지를 참여해야 하므로 for문을 사용했습니다.
+    # 템플릿에서는 페이지별 영화정보를 불러오는 for문, 한 페이지의 영화정보들에서 하나씩 영화 정보를 불러오는 for문, 이렇게 2중 for문을 사용해야 합니다... ㅠㅠ   
+    genre_movie_list = list()
+    for page in range(1, 5):
+        genre_url = 'https://api.themoviedb.org/3/movie/top_rated?api_key={}&language=ko-KR&page={}'.format(api_key, page)
+        genre_response = requests.get(genre_url).json()
+        genre = sorted(genre_response['results'], key=lambda x:x['vote_average'], reverse=True)
+        genre_movie_list.append(genre)
+
     context = {
         'now_playing': now_playing,
         'top_rated': top_rated,
+        'genre_movie_list': genre_movie_list,
     }
     return render(request, 'posts/index.html', context)
 
