@@ -1,101 +1,36 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block style %}
-  img {
-    width: 100%;
-  }
+{% block title %}
 
-  .search-result {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    margin-top: 1rem;
-  }
-
-  .result-count {
-    font-size: 1.125rem;
-  }
-
-  .movie {
-    width: 260px;
-    margin-bottom: 6rem;
-  }
-
-  .movie-poster {
-    height: 390px;
-    position: relative;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    margin-bottom: 0.5rem;
-    border: 1px solid #eae9e8;
-  }
-
-  .movie-poster img {
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .movie-title {
-    margin-top: 1rem;
-    font-size: 1.25rem;
-    font-weight: bold;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .movie-info {
-    display: flex;
-  }
-
-  .movie-info span:before {
-    content: "";
-    position: absolute;
-    top: 25%;
-    left: 18%;
-    display: block;
-    width: 1px;
-    height: 12px;
-    background-color: #e0e0e0;
-  }
-
-  .rating {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 0.125rem;
-    padding-left: 1.5rem;
-  }
-
-  .bi-star-fill {
-    margin-right: 0.125rem;
-    font-size: 0.825rem;
-    color: #35c5f0;
-  } 
-{% endblock style %}
+{% endblock title %}
 
 {% block content %}
 {% comment %} 검색 결과에 페이지네이션을 추가하는 건 어떨까요? {% endcomment %}
 {% comment %} 검색 input에 사용자가 입력한 검색어를 남길 수 있는 방법이 있을까요? {% endcomment %}
 {% comment %} 검색 결과를 최신순으로 정렬해서 보여주는 것도 좋을 것 같아요! {% endcomment %}
-  <section class="container">
+  <section class="search container">
     {% if search_data.results %}
       <p class="result-count">검색결과 <b>{{ search_data.results|length }}건</b></p>
-      <div class="search-result">
+      <div class="movie-group">
       {% for movie in posts %}
         <article class="movie">
           <a href="">
-            <div class="movie-poster">
-              {% if movie.poster_path %}
+            {% if movie.poster_path %}
+              <div class="movie-poster">
                 <img src="{{ movie.poster_path }}" alt="{{ movie.title }} 포스터">
-              {% else %}
-                {% comment %} 이미지가 없는 경우 대체 이미지 필요 {% endcomment %}
-              {% endif %}
-            </div>
-            <h3 class="movie-title">{{ movie.title }}</h3>
+              </div>
+            {% else %}
+              <div class="no-poster">
+                <img src="{% static 'no-photo.png' %}" alt="">
+              </div>
+            {% endif %}
             <div class="movie-info">
-              <p>{{ movie.release_date }} 개봉</p>
-              <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average|floatformat }}</span>
+              <h3 class="movie-title">{{ movie.title }}</h3>
+              <div class="d-flex">
+                <p>{{ movie.release_date }} 개봉</p>
+                <span class="search rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average|floatformat }}</span>
+              </div>
             </div>
           </a>
         </article>
@@ -104,48 +39,48 @@
       <h2>'{{ movie_title }}' 검색 결과가 없습니다.</h2>
     {% endif %}
     </div>
-  </section>
-
-  {% comment %} 페이지네이션 {% endcomment %}
-  <ul class="pagination justify-content-center">
-    {% if posts.has_previous %}
-      <li class="page-item">
-        <a class="page-link" href="?title={{ movie_title }}&page=1">처음으로</a>
-      </li>
-      <li class="page-item">
-        <a class="page-link" href="?title={{ movie_title }}&page={{ posts.previous_page_number }}">이전</a>
-      </li>
-    {% else %}
-      <li class="page-item disabled">
-        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
-      </li>
-    {% endif %}
-  
-    {% for page_number in posts.paginator.page_range %}
-    {% if page_number >= posts.number|add:-4 and page_number <= posts.number|add:4 %}
-      {% if page_number == posts.number %}
-        <li class="page-item active" aria-current="page">
-          <a class="page-link" href="?title={{ movie_title }}&page={{ page_number }}">{{ page_number }}</a>
+    {% comment %} 페이지네이션 {% endcomment %}
+    <ul class="pagination justify-content-center">
+      {% if posts.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?title={{ movie_title }}&page=1">처음으로</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?title={{ movie_title }}&page={{ posts.previous_page_number }}">이전</a>
         </li>
       {% else %}
-        <li class="page-item">
-          <a class="page-link" href="?title={{ movie_title }}&page={{ page_number }}">{{ page_number }}</a>
+        <li class="page-item disabled">
+          <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
         </li>
       {% endif %}
-    {% endif %}
-  {% endfor %}
-  
-    {% if posts.has_next %}
-      <li class="page-item">
-        <a class="page-link" href="?title={{ movie_title }}&page={{ posts.next_page_number }}">다음</a>
-      </li>
-      <li class="page-item">
-        <a class="page-link" href="?title={{ movie_title }}&page={{ posts.paginator.num_pages }}">마지막으로</a>
-      </li>
-    {% else %}
-      <li class="page-item disabled">
-        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
-      </li>
-    {% endif %}
-  </ul>
+    
+      {% for page_number in posts.paginator.page_range %}
+      {% if page_number >= posts.number|add:-4 and page_number <= posts.number|add:4 %}
+        {% if page_number == posts.number %}
+          <li class="page-item active" aria-current="page">
+            <a class="page-link" href="?title={{ movie_title }}&page={{ page_number }}">{{ page_number }}</a>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="?title={{ movie_title }}&page={{ page_number }}">{{ page_number }}</a>
+          </li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    
+      {% if posts.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?title={{ movie_title }}&page={{ posts.next_page_number }}">다음</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?title={{ movie_title }}&page={{ posts.paginator.num_pages }}">마지막으로</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+        </li>
+      {% endif %}
+    </ul>
+  </section>
+
 {% endblock content %}
