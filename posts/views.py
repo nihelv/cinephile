@@ -5,7 +5,7 @@ from .models import Post, Comment
 from django.core.paginator import Paginator
 import requests
 import json
-
+import random
 
 
 def index(request):
@@ -37,8 +37,8 @@ def index(request):
     top_rated_response = requests.get(top_rated_url, params=params)
     top_rated_data = top_rated_response.json()
     top_rated = sorted(top_rated_data['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
-
-    # 장르 번호를 딕셔너리로 만들어두었으니 활용하시면 됩니다. ^^
+    
+    # 장르 번호를 딕셔너리로 만들어두었으니 활용하시면 됩니다.
     genre_dict = {
         28: '액션',
         12: '모험',
@@ -64,7 +64,7 @@ def index(request):
     # 장르별 영화를 불러옵니다.
     # 템플릿에서 genre_ids에 원하는 장르 번호가 있는지 확인하여 장르별 영화를 불러올 수 있습니다.
     # 단, 평균적으로 5개 이상의 장르별 영화를 불러오려면 여러 개 페이지를 참여해야 하므로 for문을 사용했습니다.
-    # 템플릿에서는 페이지별 영화정보를 불러오는 for문, 한 페이지의 영화정보들에서 하나씩 영화 정보를 불러오는 for문, 이렇게 2중 for문을 사용해야 합니다... ㅠㅠ   
+    # 템플릿에서는 페이지별 영화정보를 불러오는 for문, 한 페이지의 영화정보들에서 하나씩 영화 정보를 불러오는 for문, 이렇게 2중 for문을 사용해야 합니다.
     genre_movie_list = list()
     for page in range(1, 5):
         genre_url = 'https://api.themoviedb.org/3/movie/top_rated'
@@ -81,10 +81,39 @@ def index(request):
         genre = sorted(genre_data['results'], key=lambda x:x['vote_average'], reverse=True)
         genre_movie_list.append(genre)
 
+    # 실시간 인기 영화 검색어
+    trending_url = 'https://api.themoviedb.org/3/trending/movie/day'
+
+    params = {
+        'api_key': TMDB_API_KEY,
+        'language': 'ko-kr',
+        'region': 'kr'
+    }
+
+    trending_response = requests.get(trending_url, params=params)
+    trending_data = trending_response.json()
+    trending = trending_data['results'][:5]
+
+    # 랜덤 영화 추천
+    random_url = 'https://api.themoviedb.org/3/discover/movie'
+
+    params = {
+        'api_key': TMDB_API_KEY,
+        'language': 'ko-kr',
+        'region': 'kr',
+        'page': random.randrange(1, 500)
+    }
+
+    random_response = requests.get(random_url, params=params)
+    random_data = random_response.json()
+    random_movie = random.choice(random_data['results'])
+
     context = {
         'now_playing': now_playing,
         'top_rated': top_rated,
         'genre_movie_list': genre_movie_list,
+        'trending': trending,
+        'random_movie': random_movie
     }
     return render(request, 'posts/index.html', context)
 
