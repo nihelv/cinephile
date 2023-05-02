@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import PostForm, CommentForm
 from .models import Post, Comment
+from django.core.paginator import Paginator
 import requests
 import json
 
@@ -62,7 +63,6 @@ def index(request):
     }
     return render(request, 'posts/index.html', context)
 
-
 # tmdb API를 이용하여 검색한 결과를 가져와 상세정보 출력
 def search(request):
     TMDB_API_KEY = 'caea966f6e10b1fbcfc446cd0052d5cd'
@@ -87,9 +87,16 @@ def search(request):
         else:
             movie['poster_path'] = '이미지 없음'
 
+    # 페이지네이션
+    page = request.GET.get('page', '1')
+    per_page = 4
+    paginator = Paginator(search_data['results'], per_page)
+    posts = paginator.get_page(page)
 
     context = {
-        'search_data': search_data
+        'search_data': search_data,
+        'posts': posts,
+        'movie_title': movie_title,
     }
 
     return render(request, 'posts/search.html', context)
@@ -107,8 +114,6 @@ def movie_detail(request, movie_id):
     overview = movie_data.get('overview')
     release_date = movie_data.get('release_date')
     poster_path = 'https://image.tmdb.org/t/p/w200' + movie_data.get('poster_path')
-
-    print(poster_path)
 
     # 해당 영화에 쓰인 후기글 가져오기
     reviews = Post.objects.filter(movie_id=movie_id)
