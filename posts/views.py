@@ -4,7 +4,7 @@ from .forms import PostForm, CommentForm
 from .models import Post, Comment
 import requests
 import json
-
+import random
 
 
 def index(request):
@@ -80,10 +80,39 @@ def index(request):
         genre = sorted(genre_data['results'], key=lambda x:x['vote_average'], reverse=True)
         genre_movie_list.append(genre)
 
+    # 실시간 인기 영화 검색어
+    trending_url = 'https://api.themoviedb.org/3/trending/movie/day'
+
+    params = {
+        'api_key': TMDB_API_KEY,
+        'language': 'ko-kr',
+        'region': 'kr'
+    }
+
+    trending_response = requests.get(trending_url, params=params)
+    trending_data = trending_response.json()
+    trending = trending_data['results'][:5]
+
+    # 랜덤 영화 추천
+    random_url = 'https://api.themoviedb.org/3/discover/movie'
+
+    params = {
+        'api_key': TMDB_API_KEY,
+        'language': 'ko-kr',
+        'region': 'kr',
+        'page': random.randrange(1, 500)
+    }
+
+    random_response = requests.get(random_url, params=params)
+    random_data = random_response.json()
+    random_movie = random.choice(random_data['results'])
+
     context = {
         'now_playing': now_playing,
         'top_rated': top_rated,
         'genre_movie_list': genre_movie_list,
+        'trending': trending,
+        'random_movie': random_movie
     }
     return render(request, 'posts/index.html', context)
 
