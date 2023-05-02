@@ -4,13 +4,71 @@
   로그인
 {% endblock title %}
 
+{% block style %}
+  html, body {
+    height: 100%;
+  }
+
+  main {
+    height: calc(100% - 5rem - 160px);
+  }
+
+  .accounts {
+    max-width: 300px;
+    height: 100%;
+    margin: 1rem auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .login-form {
+    margin-bottom: 1rem;
+  }
+
+  .login-form + .main-btn {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 1.125rem;
+    font-weight: bold;
+  }
+
+  .login-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  
+  .login-link a {
+    color: rgb(117, 117, 117);
+  }
+
+  .login-link span {
+    display: inline-block;
+    width: 1px;
+    height: 8px;
+    background-color: #e0e0e0;
+  }
+
+{% endblock style %}
 
 {% block content %}
-
-<form action="{% url 'accounts:login' %}" method="POST">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <input type="submit" value="로그인">
-</form>
+<section class="accounts">
+  <h3>로그인</h3>
+  <form action="{% url 'accounts:login' %}" method="POST">
+    <div class="login-form">  
+      {% csrf_token %}
+      {{ form.as_p }}
+    </div>
+    <input type="submit" value="로그인" class="main-btn btn">
+  </form>
+  <div class="login-link">
+    <a href="{% url 'accounts:signup' %}">회원가입</a>
+    <span></span>
+    <a href="{% url 'accounts:signup' %}">비밀번호 재설정</a>
+  </div>
+</section>
 
 {% endblock content %}

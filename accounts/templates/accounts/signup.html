@@ -4,12 +4,25 @@
   회원가입
 {% endblock title %}
 
-{% block content %}
+{% block style %}
+  .accounts {
+    max-width: 300px;
+    height: 100%;
+    margin: 1rem auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+{% endblock style %}
 
-<form action="{% url 'accounts:signup' %}" method="POST">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <input type="submit" value="회원가입">
-</form>
+{% block content %}
+<section class="accounts">
+  <h3>회원가입</h3>
+  <form action="{% url 'accounts:signup' %}" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="회원가입">
+  </form>
+</section>
 
 {% endblock content %}
