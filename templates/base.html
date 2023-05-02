@@ -253,7 +253,7 @@
           <a href="{% url 'accounts:login' %}" class="user-link">로그인</a>
           <a href="{% url 'accounts:signup' %}" class="user-link">회원가입</a>
         {% endif %}
-        <a href="" class="btn main-btn">후기 쓰기</a>
+        <a href="{% url 'posts:create' %}" class="btn main-btn">후기 쓰기</a>
       </div>
     </div>
   </nav>
