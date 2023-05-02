@@ -9,6 +9,7 @@ class post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_posts')
+    movie_id = models.IntegerField()
 
 
 class comment(models.Model):
