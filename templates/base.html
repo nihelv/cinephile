@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+
   <style>
     @font-face {
       font-family: 'Pretendard-Regular';
@@ -19,11 +21,29 @@
     }
 
     body {
-      font-family: 'Pretendard-Regular'; 
+      font-family: 'Noto Sans KR', sans-serif;
+      height: 100%;
+    }
+
+    p {
+      margin: 0;
+    }
+  
+    a {
+      text-decoration: none;
+      color: black;
+    }
+
+    li {
+      list-style: none;
     }
 
     main {
-      padding: 2rem 0 5rem 0;
+      padding-top: 4rem;
+    }
+
+    .container {
+      min-width: 1140px;
     }
     
     .navbar {
@@ -63,14 +83,14 @@
       font-size: 0.875rem;
     }
 
-    .review-btn {
+    .main-btn {
       background-color: #35C5F0;
       color: #ffffff;
       font-size: 0.875rem;
       border-radius: 0.25rem;
     }
 
-    .review-btn:hover {
+    .main-btn:hover {
       background-color: #009FCE;
       color: white;
     }
@@ -91,7 +111,7 @@
       height: 3.6rem;
       background-color: #ffffff;
       z-index: 3;
-      transition: top 0.2s ease-in-out;
+      transition: top 0.3s ease-in-out;
     }
 
     .nav-up {
@@ -103,25 +123,31 @@
       justify-content: space-between;
       align-items: center;
       margin: 0 auto;
+      padding-top: 1rem;
     }
   
-    .category .nav .nav-item .nav-link {
-      padding: 1rem 0.85rem;
+    #pills-tab {
+      display: flex;
+      margin: 0;
+      padding: 0;
+      gap: 1rem;
+    }
+
+    .tab-button {
+      padding-bottom: 1rem;
+      border: none;
+      background-color: transparent;
+    }
+
+    .tab-button.active {
+      color: #35C5F0;
       font-weight: bold;
-      color: #4e5356;
-    }
-  
-    .category .nav .nav-item .nav-link:hover {
-      color: #35C5F0;
-    }
-  
-    .category .nav .nav-item .nav-link.active {
-      color: #35C5F0;
       border-bottom: 2px solid #35C5F0;
     }
   
     .keyword-ranking-wrap {
       display: flex;
+      align-self: start;
       position: relative;
     }
   
@@ -215,32 +241,37 @@
 <body>
   <nav class="navbar sticky-top">
     <div class="container">
-      <a class="navbar-brand">Cinephile</a>
+      <a href="{% url 'posts:index' %}" class="navbar-brand">Cinephile</a>
       <form class="d-flex search-form" role="search" method="GET" action="{% url 'posts:search' %}">
         <input class="form-control me-2" type="search" name="title" placeholder="제목, 장르, 인물을 검색해보세요." aria-label="Search">
       </form>
       <div class="nav-right">
-        <a href="" class="user-link">로그인</a>
-        <a href="" class="user-link">회원가입</a>
-        <a href="" class="btn review-btn">후기 작성</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'accounts:profile' user %}">마이페이지</a>
+          <a href="{% url 'accounts:logout' %}">로그아웃</a>
+        {% else %}
+          <a href="{% url 'accounts:login' %}" class="user-link">로그인</a>
+          <a href="{% url 'accounts:signup' %}" class="user-link">회원가입</a>
+        {% endif %}
+        <a href="" class="btn main-btn">후기 쓰기</a>
       </div>
     </div>
   </nav>
   <section class="header">
     <div class="container">
       <div class="category">
-        <ul class="nav">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">홈</a>
+        <ul class="tab" id="pills-tab" role="tablist">
+          <li role="presentation">
+            <button class="tab-button active" id="button-home-tab" data-bs-toggle="pill" data-bs-target="#button-home" type="button" role="tab" aria-controls="button-home" aria-selected="true">홈</button>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">로맨스</a>
+          <li role="presentation">
+            <button class="tab-button" id="button-romance-tab" data-bs-toggle="pill" data-bs-target="#button-romance" type="button" role="tab" aria-controls="button-romance" aria-selected="false">로맨스</button>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">액션</a>
+          <li role="presentation">
+            <button class="tab-button" id="button-action-tab" data-bs-toggle="pill" data-bs-target="#button-action" type="button" role="tab" aria-controls="button-action" aria-selected="false">액션</button>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">스릴러</a>
+          <li role="presentation">
+            <button class="tab-button" id="button-comedy-tab" data-bs-toggle="pill" data-bs-target="#button-comedy" type="button" role="tab" aria-controls="button-comedy" aria-selected="false">코미디</button>
           </li>
         </ul>
       </div>
@@ -365,7 +396,7 @@
     const header = document.querySelector('.header')
     let prevScrollTop = 0
 
-    let headerMoving = function(direction) {
+    const headerMoving = function(direction) {
       if (direction == 'up') {
         header.classList.remove('nav-up')
       } else {
@@ -374,7 +405,7 @@
     }
 
     document.addEventListener('scroll', function() {
-      let nextScrollTop = window.pageYOffset || 0
+      let nextScrollTop = window.pageYOffset
       if (nextScrollTop > prevScrollTop) {
         headerMoving('down')
       } else if (nextScrollTop < prevScrollTop) {
@@ -383,6 +414,90 @@
 
       prevScrollTop = nextScrollTop
     })
+
+    function Slider(target) {
+      let index = 1;
+      let isMoved = true;
+      const speed = 1500; // ms
+    
+      const transform = "transform " + speed / 1000 + "s";
+      let translate = (i) => "translateY(-" + 100 * i + "%)";
+    
+      const slider = document.querySelector(target);
+      const sliderRects = slider.getClientRects()[0];
+      slider.style["overflow"] = "hidden";
+  
+      const container = document.createElement("div");
+      container.style["display"] = "flex";
+      container.style["flex-direction"] = "column";
+      container.style["width"] = sliderRects.width + "px";
+      container.style["height"] = sliderRects.height / 10 + "px";
+      container.style["transform"] = translate(index);
+    
+      let boxes = [].slice.call(slider.children);
+      boxes = [].concat(boxes[boxes.length - 1], boxes, boxes[0]);
+    
+      const size = boxes.length;
+      for (let i = 0; i < size; i++) {
+        const box = boxes[i];
+        box.style["height"] = "100%";
+        box.style["width"] = "100%";
+        container.appendChild(box.cloneNode(true));
+      }
+    
+      container.addEventListener("transitionstart", function () {
+        isMoved = false;
+        setTimeout(() => {
+          isMoved = true;
+        }, speed);
+      });
+      container.addEventListener("transitionend", function () {
+        if (index === size - 1) {
+          index = 1;
+          container.style["transition"] = "none";
+          container.style["transform"] = translate(index);
+        }
+        if (index === 0) {
+          index = size - 1;
+          container.style["transition"] = "none";
+          container.style["transform"] = translate(index);
+        }
+      });
+    
+      slider.innerHTML = "";
+      slider.appendChild(container);
+    
+      return {
+        move: function (i) {
+          if (isMoved === true) {
+            index = i;
+            container.style["transition"] = transform;
+            container.style["transform"] = translate(index);
+          }
+        },
+        next: function () {
+          if (isMoved === true) {
+            index = (index + 1) % size;
+            container.style["transition"] = transform;
+            container.style["transform"] = translate(index);
+          }
+        },
+        prev: function () {
+          if (isMoved === true) {
+            index = index === 0 ? index + size : index;
+            index = (index - 1) % size;
+            container.style["transition"] = transform;
+            container.style["transform"] = translate(index);
+          }
+        }
+      };
+    }
+    
+    const s1 = new Slider("#slider");
+    
+    setInterval(() => {
+      s1.next();
+    }, 1500)
 
     {% block script %}
     
