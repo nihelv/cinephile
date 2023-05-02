@@ -37,7 +37,7 @@ def index(request):
     top_rated_data = top_rated_response.json()
     top_rated = sorted(top_rated_data['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
 
-    # 장르 번호를 딕셔너리로 만들어두었으니 활용하시면 됩니다. ^^
+    # 장르 번호를 딕셔너리로 만들어두었으니 활용하시면 됩니다.
     genre_dict = {
         28: '액션',
         12: '모험',
