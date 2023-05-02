@@ -8,18 +8,34 @@ import json
 
 
 def index(request):
-    # API_KEY = json.loads(open('secrets.json').read())
-    api_key = 'caea966f6e10b1fbcfc446cd0052d5cd' 
+    TMDB_API_KEY = 'caea966f6e10b1fbcfc446cd0052d5cd' 
 
     # 최신 상영작을 평점 순으로 나열하여 5개만 불러옵니다.
-    now_playing_url = 'https://api.themoviedb.org/3/movie/now_playing?api_key={}&language=ko-KR&page=1&region=KR'.format(api_key)
-    now_playing_response = requests.get(now_playing_url).json()
-    now_playing = sorted(now_playing_response['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
+    now_playing_url = 'https://api.themoviedb.org/3/movie/now_playing'
+
+    params = {
+        'api_key': TMDB_API_KEY,
+        'language': 'ko-kr',
+        'region':'kr',
+        'page': 1
+    }
+    now_playing_response = requests.get(now_playing_url, params=params)
+    now_playing_data = now_playing_response.json()
+    now_playing = sorted(now_playing_data['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
 
     # 명작 영화를 평점 순으로 나열하여 5개만 불러옵니다.
-    top_rated_url = 'https://api.themoviedb.org/3/movie/top_rated?api_key={}&language=ko-KR&page=1'.format(api_key)
-    top_rated_response = requests.get(top_rated_url).json()
-    top_rated = sorted(top_rated_response['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
+    top_rated_url = 'https://api.themoviedb.org/3/movie/top_rated'
+
+    params = {
+        'api_key': TMDB_API_KEY,
+        'language': 'ko-kr',
+        'region':'kr',
+        'page': 1
+    }
+
+    top_rated_response = requests.get(top_rated_url, params=params)
+    top_rated_data = top_rated_response.json()
+    top_rated = sorted(top_rated_data['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
 
     # 장르 번호를 딕셔너리로 만들어두었으니 활용하시면 됩니다. ^^
     genre_dict = {
@@ -50,9 +66,18 @@ def index(request):
     # 템플릿에서는 페이지별 영화정보를 불러오는 for문, 한 페이지의 영화정보들에서 하나씩 영화 정보를 불러오는 for문, 이렇게 2중 for문을 사용해야 합니다... ㅠㅠ   
     genre_movie_list = list()
     for page in range(1, 5):
-        genre_url = 'https://api.themoviedb.org/3/movie/top_rated?api_key={}&language=ko-KR&page={}'.format(api_key, page)
-        genre_response = requests.get(genre_url).json()
-        genre = sorted(genre_response['results'], key=lambda x:x['vote_average'], reverse=True)
+        genre_url = 'https://api.themoviedb.org/3/movie/top_rated'
+
+        params = {
+            'api_key': TMDB_API_KEY,
+            'language': 'ko-kr',
+            'region':'kr',
+            'page': page
+        }
+
+        genre_response = requests.get(genre_url, params=params)
+        genre_data = genre_response.json()
+        genre = sorted(genre_data['results'], key=lambda x:x['vote_average'], reverse=True)
         genre_movie_list.append(genre)
 
     context = {
