@@ -82,7 +82,7 @@
     {% if search_data.results %}
       <p class="result-count">검색결과 <b>{{ search_data.results|length }}건</b></p>
       <div class="search-result">
-      {% for movie in search_data.results %}
+      {% for movie in posts %}
         <article class="movie">
           <a href="">
             <div class="movie-poster">
@@ -105,4 +105,47 @@
     {% endif %}
     </div>
   </section>
+
+  {% comment %} 페이지네이션 {% endcomment %}
+  <ul class="pagination justify-content-center">
+    {% if posts.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?title={{ movie_title }}&page=1">처음으로</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?title={{ movie_title }}&page={{ posts.previous_page_number }}">이전</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+      </li>
+    {% endif %}
+  
+    {% for page_number in posts.paginator.page_range %}
+    {% if page_number >= posts.number|add:-4 and page_number <= posts.number|add:4 %}
+      {% if page_number == posts.number %}
+        <li class="page-item active" aria-current="page">
+          <a class="page-link" href="?title={{ movie_title }}&page={{ page_number }}">{{ page_number }}</a>
+        </li>
+      {% else %}
+        <li class="page-item">
+          <a class="page-link" href="?title={{ movie_title }}&page={{ page_number }}">{{ page_number }}</a>
+        </li>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+  
+    {% if posts.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?title={{ movie_title }}&page={{ posts.next_page_number }}">다음</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?title={{ movie_title }}&page={{ posts.paginator.num_pages }}">마지막으로</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+      </li>
+    {% endif %}
+  </ul>
 {% endblock content %}
