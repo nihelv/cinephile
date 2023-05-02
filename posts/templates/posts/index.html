@@ -1,23 +1,19 @@
 {% extends 'base.html' %}
 
 {% block style %}
-  p {
-    margin: 0;
-  }
-
-  a {
-    text-decoration: none;
-    color: black;
-  }
-
   img {
     width: 100%;
+  }
+
+  .tab-content {
+    padding-bottom: 5rem;
   }
   
   .content {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding: 0;
   }
 
   .title {
@@ -26,14 +22,15 @@
   }
 
   .section-header {
-    padding: 2rem 0 1rem 0;
+    padding: 1rem 0;
   }
 
   .movie-link:hover .movie-poster img {
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
 
   .movie-group {
+    counter-reset: ranking;
     display: flex;
     justify-content: space-between;
   }
@@ -54,10 +51,14 @@
     border-radius: 0.5rem;
     overflow: hidden;
     margin-bottom: 0.5rem;
+    height: 365px;
+    border: 1px solid #eae9e8;
   }
 
   .movie-poster img {
     transition: all 0.2s linear;
+    height: 100%;
+    object-fit: cover;
   }
 
   .movie-ranking {
@@ -76,10 +77,14 @@
     font-weight: bold;
   }
 
+  .movie-ranking-number:before {
+    counter-increment: ranking;
+    content: counter(ranking);
+  }
+
   .movie-review {
     margin-bottom: 0.25rem;
     font-size: 0.875rem;
-    font-weight: bold;
     color: #9e9e9e;
   }
 
@@ -94,7 +99,7 @@
   }
 
   .movie-category span {
-    padding: 0.25rem 0.5rem;
+    padding: 0.125rem 0.5rem 0.25rem;
     font-size: 0.75rem;
     font-weight: bold;
     border-radius: 0.25rem;
@@ -129,406 +134,271 @@
 {% endblock style %}
 
 {% block content %}
+  <div class="tab-content" id="pills-tabContent">
+    <div class="tab-pane fade show active" id="button-home" role="tabpanel" aria-labelledby="button-home-tab" tabindex="0">
+      <section class="content container">
+        <div class="section-header">
+          <h2 class="title">인기 상영작</h2>
+        </div>
+        <div class="movie-group">
+          {% for movie in now_playing %}
+            <article class="movie">
+              <a class="movie-link" href="">
+                <div class="movie-poster">
+                  <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
+                  <div class="movie-ranking">
+                    <p class="movie-ranking-number"></p>
+                  </div>
+                </div>
+                <div class="movie-info">
+                  <p class="title">{{ movie.title }}</p>
+                  <div class="movie-review">
+                    <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
+                    <span>후기 {{ movie.vote_count }}</span>
+                  </div>
+                  <div class="movie-category">
+                    <span># {{ movie.genre_ids }}</span>
+                    <span># 코미디</span>
+                  </div>
+                </div>
+              </a>
+            </article>
+          {% endfor %}
+        </div>
+      </section>
+    
+      <section class="banner container my-5">
+        <h5 class="banner-text">~랜덤뽑기 문구~</h5>
+        <a href="" class="banner-button">랜덤 영화 보기</a>
+      </section>
+    
+      <section class="content container">
+        <div class="section-header">
+          <h2 class="title">평점이 높은 작품</h2>
+        </div>
+        <div class="movie-group">
+          {% for movie in top_rated %}
+            <article class="movie">
+              <a class="movie-link" href="">
+                <div class="movie-poster">
+                  <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
+                  <div class="movie-ranking">
+                    <p class="movie-ranking-number"></p>
+                  </div>
+                </div>
+                <div class="movie-info">
+                  <p class="title">{{ movie.title }}</p>
+                  <div class="movie-review">
+                    <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
+                    <span>후기 {{ movie.vote_count }}</span>
+                  </div>
+                  <div class="movie-category">
+                    <span># {{ movie.genre_ids }}</span>
+                    <span># 코미디</span>
+                  </div>
+                </div>
+              </a>
+            </article>
+          {% endfor %}
+        </div>
+      </section>
+    
+      <section class="content container">
+        <div class="section-header">
+          <h2 class="title">최근에 개봉했어요!</h2>
+        </div>
+        <div class="movie-group">
+          <article class="movie">
+            <a class="movie-link" href="">
+              <div class="movie-poster">
+                <img src="https://an2-img.amz.wtchn.net/image/v2/WLY8BV7ynF2vdojWdKBGUg.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9ERXhOalE1TVRRMU5ETXlNRGM0TVRjaWZRLlZWR0lYR1NZQkotOWllVVFiV1RQU0JuS28tTlNQSlI4QVlDSVVFRm9wdE0" alt="">
+              </div>
+              <div class="movie-info">
+                <p class="title">슈퍼 마리오 브라더스</p>
+                <div class="movie-review">
+                  <span class="rating"><i class="bi bi-star-fill"></i>3.4</span>
+                  <span>후기 4</span>
+                </div>
+                <div class="movie-category">
+                  <span># 애니메이션</span>
+                  <span># 코미디</span>
+                </div>
+              </div>
+            </a>
+          </article>
+          <article class="movie">
+            <a class="movie-link" href="">
+              <div class="movie-poster">
+                <img src="https://an2-img.amz.wtchn.net/image/v2/yonId_2R_sJbvI3AURuNHw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9ERTBNemswT1RNME1ERTJNRGMwT0RraWZRLkRwZG45a1BkWGRTSWZjbVVtRklwNjR3RUFrTUFTT1BSNzZQNFNkaS1INm8" alt="">
+              </div>
+              <div class="movie-info">
+                <p class="title">드림</p>
+                <div class="movie-review">
+                  <span class="rating"><i class="bi bi-star-fill"></i>2.9</span>
+                  <span>후기 13</span>
+                </div>
+                <div class="movie-category">
+                  <span># 드라마</span>
+                </div>
+              </div>
+            </a>
+          </article>
+          <article class="movie">
+            <a class="movie-link" href="">
+              <div class="movie-poster">
+                <img src="https://an2-img.amz.wtchn.net/image/v2/TIxhP_uofjSnN1Wc00igqA.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk56YzFOamN5TmpZek56SXdNVFUwTURRaWZRLmNnT3BLOC1QVEV4bDByQWdJY2dIWWVaOURWZlA4Sk9uVTNVTC1FYXg1T1E" alt="">
+              </div>
+              <div class="movie-info">
+                <p class="title">가디언즈 오브 갤럭시: Volume 3</p>
+                <div class="movie-review">
+                  <span class="rating"><i class="bi bi-star-fill"></i>0</span>
+                  <span>후기 0</span>
+                </div>
+                <div class="movie-category">
+                  <span># 액션</span>
+                  <span># 코미디</span>
+                </div>
+              </div>
+            </a>
+          </article>
+          <article class="movie">
+            <a class="movie-link" href="">
+              <div class="movie-poster">
+                <img src="https://an2-img.amz.wtchn.net/image/v2/Gj9piK9dLotP-7jFSgLuZw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9EQTNPVFl6TXprNU5qYzBNamc1TURBaWZRLkV6MlpieEtfakR4b2h1SVhvcHU5eVRBOUo2dFVrMnhOM3J2eDlMSmNaZHc" alt="">
+              </div>
+              <div class="movie-info">
+                <p class="title">존 윅 4</p>
+                <div class="movie-review">
+                  <span class="rating"><i class="bi bi-star-fill"></i>3.7</span>
+                  <span>후기 27</span>
+                </div>
+                <div class="movie-category">
+                  <span># 스릴러</span>
+                  <span># 액션</span>
+                </div>
+              </div>
+            </a>
+          </article>
+          <article class="movie">
+            <a class="movie-link" href="">
+              <div class="movie-poster">
+                <img src="https://an2-img.amz.wtchn.net/image/v2/HaTjW_4v3cZnU9ukZvTSrw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk56RTNOalk0TlRjMU1EVTFNamMzTWpVaWZRLncyaWZ6TU1LM2hGUy1GNnhKczlDNzFlYkVuMDZMb2ZyZXdaMWI3SjZxS1k" alt="">
+              </div>
+              <div class="movie-info">
+                <p class="title">더 퍼스트 슬램덩크</p>
+                <div class="movie-review">
+                  <span class="rating"><i class="bi bi-star-fill"></i>4.1</span>
+                  <span>후기 31</span>
+                </div>
+                <div class="movie-category">
+                  <span># 애니메이션</span>
+                  <span># 스포츠</span>
+                </div>
+              </div>
+            </a>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <div class="tab-pane fade" id="button-romance" role="tabpanel" aria-labelledby="button-romance-tab" tabindex="0">
+      <section class="content container">
+        <div class="section-header">
+          <h2 class="title">로맨스</h2>
+        </div>
+        <div class="movie-group">
+          {% for movie in now_playing %}
+            <article class="movie">
+              <a class="movie-link" href="">
+                <div class="movie-poster">
+                  <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
+                  <div class="movie-ranking">
+                    <p class="movie-ranking-number"></p>
+                  </div>
+                </div>
+                <div class="movie-info">
+                  <p class="title">{{ movie.title }}</p>
+                  <div class="movie-review">
+                    <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
+                    <span>후기 {{ movie.vote_count }}</span>
+                  </div>
+                  <div class="movie-category">
+                    <span># {{ movie.genre_ids }}</span>
+                    <span># 코미디</span>
+                  </div>
+                </div>
+              </a>
+            </article>
+          {% endfor %}
+        </div>
+      </section>
+    </div>
+
+    <div class="tab-pane fade" id="button-action" role="tabpanel" aria-labelledby="button-action-tab" tabindex="0">
+      <section class="content container">
+        <div class="section-header">
+          <h2 class="title">액션</h2>
+        </div>
+        <div class="movie-group">
+          {% for movie in now_playing %}
+            <article class="movie">
+              <a class="movie-link" href="">
+                <div class="movie-poster">
+                  <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
+                  <div class="movie-ranking">
+                    <p class="movie-ranking-number"></p>
+                  </div>
+                </div>
+                <div class="movie-info">
+                  <p class="title">{{ movie.title }}</p>
+                  <div class="movie-review">
+                    <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
+                    <span>후기 {{ movie.vote_count }}</span>
+                  </div>
+                  <div class="movie-category">
+                    <span># {{ movie.genre_ids }}</span>
+                    <span># 코미디</span>
+                  </div>
+                </div>
+              </a>
+            </article>
+          {% endfor %}
+        </div>
+      </section>
+    </div>
+    
+    <div class="tab-pane fade" id="button-comedy" role="tabpanel" aria-labelledby="button-comedy-tab" tabindex="0">
+      <section class="content container">
+        <div class="section-header">
+          <h2 class="title">코미디</h2>
+        </div>
+        <div class="movie-group">
+          {% for movie in now_playing %}
+            <article class="movie">
+              <a class="movie-link" href="">
+                <div class="movie-poster">
+                  <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
+                  <div class="movie-ranking">
+                    <p class="movie-ranking-number"></p>
+                  </div>
+                </div>
+                <div class="movie-info">
+                  <p class="title">{{ movie.title }}</p>
+                  <div class="movie-review">
+                    <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
+                    <span>후기 {{ movie.vote_count }}</span>
+                  </div>
+                  <div class="movie-category">
+                    <span># {{ movie.genre_ids }}</span>
+                    <span># 코미디</span>
+                  </div>
+                </div>
+              </a>
+            </article>
+          {% endfor %}
+        </div>
+      </section>
+    </div>
+  </div>
   
-
-  <section class="content container">
-    <div class="section-header">
-      <h2 class="title">인기 상영작</h2>
-    </div>
-    <div class="movie-group">
-      <article class="movie">
-        <a class="movie-link" href="">
-          <div class="movie-poster">
-            <img src="https://an2-img.amz.wtchn.net/image/v2/WLY8BV7ynF2vdojWdKBGUg.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9ERXhOalE1TVRRMU5ETXlNRGM0TVRjaWZRLlZWR0lYR1NZQkotOWllVVFiV1RQU0JuS28tTlNQSlI4QVlDSVVFRm9wdE0" alt="">
-            <div class="movie-ranking">
-              <p class="movie-ranking-number">1</p>
-            </div>
-          </div>
-          <div class="movie-info">
-            <p class="title">슈퍼 마리오 브라더스</p>
-            <div class="movie-review">
-              <span class="rating"><i class="bi bi-star-fill"></i>3.4</span>
-              <span>후기 4</span>
-            </div>
-            <div class="movie-category">
-              <span># 애니메이션</span>
-              <span># 코미디</span>
-            </div>
-          </div>
-        </a>
-      </article>
-      <article class="movie">
-        <a class="movie-link" href="">
-          <div class="movie-poster">
-            <img src="https://an2-img.amz.wtchn.net/image/v2/yonId_2R_sJbvI3AURuNHw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9ERTBNemswT1RNME1ERTJNRGMwT0RraWZRLkRwZG45a1BkWGRTSWZjbVVtRklwNjR3RUFrTUFTT1BSNzZQNFNkaS1INm8" alt="">
-            <div class="movie-ranking">
-              <p class="movie-ranking-number">2</p>
-            </div>
-          </div>
-          <div class="movie-info">
-            <p class="title">드림</p>
-            <div class="movie-review">
-              <span class="rating"><i class="bi bi-star-fill"></i>2.9</span>
-              <span>후기 13</span>
-            </div>
-            <div class="movie-category">
-              <span># 드라마</span>
-            </div>
-          </div>
-        </a>
-      </article>
-      <article class="movie">
-        <a class="movie-link" href="">
-          <div class="movie-poster">
-            <img src="https://an2-img.amz.wtchn.net/image/v2/TIxhP_uofjSnN1Wc00igqA.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk56YzFOamN5TmpZek56SXdNVFUwTURRaWZRLmNnT3BLOC1QVEV4bDByQWdJY2dIWWVaOURWZlA4Sk9uVTNVTC1FYXg1T1E" alt="">
-            <div class="movie-ranking">
-              <p class="movie-ranking-number">3</p>
-            </div>
-          </div>
-          <div class="movie-info">
-            <p class="title">가디언즈 오브 갤럭시: Volume 3</p>
-            <div class="movie-review">
-              <span class="rating"><i class="bi bi-star-fill"></i>0</span>
-              <span>후기 0</span>
-            </div>
-            <div class="movie-category">
-              <span># 액션</span>
-              <span># 코미디</span>
-            </div>
-          </div>
-        </a>
-      </article>
-      <article class="movie">
-        <a class="movie-link" href="">
-          <div class="movie-poster">
-            <img src="https://an2-img.amz.wtchn.net/image/v2/Gj9piK9dLotP-7jFSgLuZw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9EQTNPVFl6TXprNU5qYzBNamc1TURBaWZRLkV6MlpieEtfakR4b2h1SVhvcHU5eVRBOUo2dFVrMnhOM3J2eDlMSmNaZHc" alt="">
-            <div class="movie-ranking">
-              <p class="movie-ranking-number">4</p>
-            </div>
-          </div>
-          <div class="movie-info">
-            <p class="title">존 윅 4</p>
-            <div class="movie-review">
-              <span class="rating"><i class="bi bi-star-fill"></i>3.7</span>
-              <span>후기 27</span>
-            </div>
-            <div class="movie-category">
-              <span># 스릴러</span>
-              <span># 액션</span>
-            </div>
-          </div>
-        </a>
-      </article>
-      <article class="movie">
-        <a class="movie-link" href="">
-          <div class="movie-poster">
-            <img src="https://an2-img.amz.wtchn.net/image/v2/HaTjW_4v3cZnU9ukZvTSrw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk56RTNOalk0TlRjMU1EVTFNamMzTWpVaWZRLncyaWZ6TU1LM2hGUy1GNnhKczlDNzFlYkVuMDZMb2ZyZXdaMWI3SjZxS1k" alt="">
-            <div class="movie-ranking">
-              <p class="movie-ranking-number">5</p>
-            </div>
-          </div>
-          <div class="movie-info">
-            <p class="title">더 퍼스트 슬램덩크</p>
-            <div class="movie-review">
-              <span class="rating"><i class="bi bi-star-fill"></i>4.1</span>
-              <span>후기 31</span>
-            </div>
-            <div class="movie-category">
-              <span># 애니메이션</span>
-              <span># 스포츠</span>
-            </div>
-          </div>
-        </a>
-      </article>
-    </div>
-  </section>
-
-  <section class="banner container my-5">
-    <h5 class="banner-text">~랜덤뽑기 문구~</h5>
-    <a href="" class="banner-button">랜덤 영화 보기</a>
-  </section>
-
-  <section class="content container">
-    <div class="section-header">
-      <h2 class="title">평점이 높은 작품</h2>
-    </div>
-    <div class="movie-group">
-      <article class="movie">
-        <a class="movie-link" href="">
-          <div class="movie-poster">
-            <img src="https://an2-img.amz.wtchn.net/image/v2/WLY8BV7ynF2vdojWdKBGUg.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9ERXhOalE1TVRRMU5ETXlNRGM0TVRjaWZRLlZWR0lYR1NZQkotOWllVVFiV1RQU0JuS28tTlNQSlI4QVlDSVVFRm9wdE0" alt="">
-          </div>
-          <div class="movie-info">
-            <p class="title">슈퍼 마리오 브라더스</p>
-            <div class="movie-review">
-              <span class="rating"><i class="bi bi-star-fill"></i>3.4</span>
-              <span>후기 4</span>
-            </div>
-            <div class="movie-category">
-              <span># 애니메이션</span>
-              <span># 코미디</span>
-            </div>
-          </div>
-        </a>
-      </article>
-      <article class="movie">
-        <a class="movie-link" href="">
-          <div class="movie-poster">
-            <img src="https://an2-img.amz.wtchn.net/image/v2/yonId_2R_sJbvI3AURuNHw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9ERTBNemswT1RNME1ERTJNRGMwT0RraWZRLkRwZG45a1BkWGRTSWZjbVVtRklwNjR3RUFrTUFTT1BSNzZQNFNkaS1INm8" alt="">
-          </div>
-          <div class="movie-info">
-            <p class="title">드림</p>
-            <div class="movie-review">
-              <span class="rating"><i class="bi bi-star-fill"></i>2.9</span>
-              <span>후기 13</span>
-            </div>
-            <div class="movie-category">
-              <span># 드라마</span>
-            </div>
-          </div>
-        </a>
-      </article>
-      <article class="movie">
-        <a class="movie-link" href="">
-          <div class="movie-poster">
-            <img src="https://an2-img.amz.wtchn.net/image/v2/TIxhP_uofjSnN1Wc00igqA.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk56YzFOamN5TmpZek56SXdNVFUwTURRaWZRLmNnT3BLOC1QVEV4bDByQWdJY2dIWWVaOURWZlA4Sk9uVTNVTC1FYXg1T1E" alt="">
-          </div>
-          <div class="movie-info">
-            <p class="title">가디언즈 오브 갤럭시: Volume 3</p>
-            <div class="movie-review">
-              <span class="rating"><i class="bi bi-star-fill"></i>0</span>
-              <span>후기 0</span>
-            </div>
-            <div class="movie-category">
-              <span># 액션</span>
-              <span># 코미디</span>
-            </div>
-          </div>
-        </a>
-      </article>
-      <article class="movie">
-        <a class="movie-link" href="">
-          <div class="movie-poster">
-            <img src="https://an2-img.amz.wtchn.net/image/v2/Gj9piK9dLotP-7jFSgLuZw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9EQTNPVFl6TXprNU5qYzBNamc1TURBaWZRLkV6MlpieEtfakR4b2h1SVhvcHU5eVRBOUo2dFVrMnhOM3J2eDlMSmNaZHc" alt="">
-          </div>
-          <div class="movie-info">
-            <p class="title">존 윅 4</p>
-            <div class="movie-review">
-              <span class="rating"><i class="bi bi-star-fill"></i>3.7</span>
-              <span>후기 27</span>
-            </div>
-            <div class="movie-category">
-              <span># 스릴러</span>
-              <span># 액션</span>
-            </div>
-          </div>
-        </a>
-      </article>
-      <article class="movie">
-        <a class="movie-link" href="">
-          <div class="movie-poster">
-            <img src="https://an2-img.amz.wtchn.net/image/v2/HaTjW_4v3cZnU9ukZvTSrw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk56RTNOalk0TlRjMU1EVTFNamMzTWpVaWZRLncyaWZ6TU1LM2hGUy1GNnhKczlDNzFlYkVuMDZMb2ZyZXdaMWI3SjZxS1k" alt="">
-          </div>
-          <div class="movie-info">
-            <p class="title">더 퍼스트 슬램덩크</p>
-            <div class="movie-review">
-              <span class="rating"><i class="bi bi-star-fill"></i>4.1</span>
-              <span>후기 31</span>
-            </div>
-            <div class="movie-category">
-              <span># 애니메이션</span>
-              <span># 스포츠</span>
-            </div>
-          </div>
-        </a>
-      </article>
-    </div>
-  </section>
-
-  <section class="content container">
-    <div class="section-header">
-      <h2 class="title">최근에 개봉했어요!</h2>
-    </div>
-    <div class="movie-group">
-      <article class="movie">
-        <a class="movie-link" href="">
-          <div class="movie-poster">
-            <img src="https://an2-img.amz.wtchn.net/image/v2/WLY8BV7ynF2vdojWdKBGUg.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9ERXhOalE1TVRRMU5ETXlNRGM0TVRjaWZRLlZWR0lYR1NZQkotOWllVVFiV1RQU0JuS28tTlNQSlI4QVlDSVVFRm9wdE0" alt="">
-          </div>
-          <div class="movie-info">
-            <p class="title">슈퍼 마리오 브라더스</p>
-            <div class="movie-review">
-              <span class="rating"><i class="bi bi-star-fill"></i>3.4</span>
-              <span>후기 4</span>
-            </div>
-            <div class="movie-category">
-              <span># 애니메이션</span>
-              <span># 코미디</span>
-            </div>
-          </div>
-        </a>
-      </article>
-      <article class="movie">
-        <a class="movie-link" href="">
-          <div class="movie-poster">
-            <img src="https://an2-img.amz.wtchn.net/image/v2/yonId_2R_sJbvI3AURuNHw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9ERTBNemswT1RNME1ERTJNRGMwT0RraWZRLkRwZG45a1BkWGRTSWZjbVVtRklwNjR3RUFrTUFTT1BSNzZQNFNkaS1INm8" alt="">
-          </div>
-          <div class="movie-info">
-            <p class="title">드림</p>
-            <div class="movie-review">
-              <span class="rating"><i class="bi bi-star-fill"></i>2.9</span>
-              <span>후기 13</span>
-            </div>
-            <div class="movie-category">
-              <span># 드라마</span>
-            </div>
-          </div>
-        </a>
-      </article>
-      <article class="movie">
-        <a class="movie-link" href="">
-          <div class="movie-poster">
-            <img src="https://an2-img.amz.wtchn.net/image/v2/TIxhP_uofjSnN1Wc00igqA.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk56YzFOamN5TmpZek56SXdNVFUwTURRaWZRLmNnT3BLOC1QVEV4bDByQWdJY2dIWWVaOURWZlA4Sk9uVTNVTC1FYXg1T1E" alt="">
-          </div>
-          <div class="movie-info">
-            <p class="title">가디언즈 오브 갤럭시: Volume 3</p>
-            <div class="movie-review">
-              <span class="rating"><i class="bi bi-star-fill"></i>0</span>
-              <span>후기 0</span>
-            </div>
-            <div class="movie-category">
-              <span># 액션</span>
-              <span># 코미디</span>
-            </div>
-          </div>
-        </a>
-      </article>
-      <article class="movie">
-        <a class="movie-link" href="">
-          <div class="movie-poster">
-            <img src="https://an2-img.amz.wtchn.net/image/v2/Gj9piK9dLotP-7jFSgLuZw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9EQTNPVFl6TXprNU5qYzBNamc1TURBaWZRLkV6MlpieEtfakR4b2h1SVhvcHU5eVRBOUo2dFVrMnhOM3J2eDlMSmNaZHc" alt="">
-          </div>
-          <div class="movie-info">
-            <p class="title">존 윅 4</p>
-            <div class="movie-review">
-              <span class="rating"><i class="bi bi-star-fill"></i>3.7</span>
-              <span>후기 27</span>
-            </div>
-            <div class="movie-category">
-              <span># 스릴러</span>
-              <span># 액션</span>
-            </div>
-          </div>
-        </a>
-      </article>
-      <article class="movie">
-        <a class="movie-link" href="">
-          <div class="movie-poster">
-            <img src="https://an2-img.amz.wtchn.net/image/v2/HaTjW_4v3cZnU9ukZvTSrw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk56RTNOalk0TlRjMU1EVTFNamMzTWpVaWZRLncyaWZ6TU1LM2hGUy1GNnhKczlDNzFlYkVuMDZMb2ZyZXdaMWI3SjZxS1k" alt="">
-          </div>
-          <div class="movie-info">
-            <p class="title">더 퍼스트 슬램덩크</p>
-            <div class="movie-review">
-              <span class="rating"><i class="bi bi-star-fill"></i>4.1</span>
-              <span>후기 31</span>
-            </div>
-            <div class="movie-category">
-              <span># 애니메이션</span>
-              <span># 스포츠</span>
-            </div>
-          </div>
-        </a>
-      </article>
-    </div>
-  </section>
 {% endblock content %}
-
-{% block script %}
-  function Slider(target, type) {
-    let index = 1;
-    let isMoved = true;
-    const speed = 1500; // ms
-  
-    const transform = "transform " + speed / 1000 + "s";
-    let translate = (i) => "translateX(-" + 100 * i + "%)";
-    if (type === "V") {
-      translate = (i) => "translateY(-" + 100 * i + "%)";
-    }
-  
-    const slider = document.querySelector(target);
-    const sliderRects = slider.getClientRects()[0];
-    slider.style["overflow"] = "hidden";
-  
-    const container = document.createElement("div");
-    container.style["display"] = "flex";
-    container.style["flex-direction"] = type === "V" ? "column" : "row";
-    container.style["width"] = sliderRects.width + "px";
-    container.style["height"] = sliderRects.height / 10 + "px";
-    container.style["transform"] = translate(index);
-  
-    let boxes = [].slice.call(slider.children);
-    boxes = [].concat(boxes[boxes.length - 1], boxes, boxes[0]);
-  
-    const size = boxes.length;
-    for (let i = 0; i < size; i++) {
-      const box = boxes[i];
-      box.style["height"] = "100%";
-      box.style["width"] = "100%";
-      container.appendChild(box.cloneNode(true));
-    }
-  
-    container.addEventListener("transitionstart", function () {
-      isMoved = false;
-      setTimeout(() => {
-        isMoved = true;
-      }, speed);
-    });
-    container.addEventListener("transitionend", function () {
-      if (index === size - 1) {
-        index = 1;
-        container.style["transition"] = "none";
-        container.style["transform"] = translate(index);
-      }
-      if (index === 0) {
-        index = size - 1;
-        container.style["transition"] = "none";
-        container.style["transform"] = translate(index);
-      }
-    });
-  
-    slider.innerHTML = "";
-    slider.appendChild(container);
-  
-    return {
-      move: function (i) {
-        if (isMoved === true) {
-          index = i;
-          container.style["transition"] = transform;
-          container.style["transform"] = translate(index);
-        }
-      },
-      next: function () {
-        if (isMoved === true) {
-          index = (index + 1) % size;
-          container.style["transition"] = transform;
-          container.style["transform"] = translate(index);
-        }
-      },
-      prev: function () {
-        if (isMoved === true) {
-          index = index === 0 ? index + size : index;
-          index = (index - 1) % size;
-          container.style["transition"] = transform;
-          container.style["transform"] = translate(index);
-        }
-      }
-    };
-  }
-  
-  const s1 = new Slider("#slider", "V");
-  
-  setInterval(() => {
-    s1.next();
-  }, 1500)
-
-{% endblock script %}
