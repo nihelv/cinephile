@@ -2,24 +2,41 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import PostForm, CommentForm
 from .models import Post, Comment
+from django.core.paginator import Paginator
 import requests
 import json
 
 
 
 def index(request):
-    # API_KEY = json.loads(open('secrets.json').read())
-    api_key = 'caea966f6e10b1fbcfc446cd0052d5cd' 
+    TMDB_API_KEY = 'caea966f6e10b1fbcfc446cd0052d5cd' 
 
     # 최신 상영작을 평점 순으로 나열하여 5개만 불러옵니다.
-    now_playing_url = 'https://api.themoviedb.org/3/movie/now_playing?api_key={}&language=ko-KR&page=1&region=KR'.format(api_key)
-    now_playing_response = requests.get(now_playing_url).json()
-    now_playing = sorted(now_playing_response['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
+    now_playing_url = 'https://api.themoviedb.org/3/movie/now_playing'
+
+    params = {
+        'api_key': TMDB_API_KEY,
+        'language': 'ko-kr',
+        'region':'kr',
+        'page': 1
+    }
+    now_playing_response = requests.get(now_playing_url, params=params)
+    now_playing_data = now_playing_response.json()
+    now_playing = sorted(now_playing_data['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
 
     # 명작 영화를 평점 순으로 나열하여 5개만 불러옵니다.
-    top_rated_url = 'https://api.themoviedb.org/3/movie/top_rated?api_key={}&language=ko-KR&page=1'.format(api_key)
-    top_rated_response = requests.get(top_rated_url).json()
-    top_rated = sorted(top_rated_response['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
+    top_rated_url = 'https://api.themoviedb.org/3/movie/top_rated'
+
+    params = {
+        'api_key': TMDB_API_KEY,
+        'language': 'ko-kr',
+        'region':'kr',
+        'page': 1
+    }
+
+    top_rated_response = requests.get(top_rated_url, params=params)
+    top_rated_data = top_rated_response.json()
+    top_rated = sorted(top_rated_data['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
 
     # 장르 번호를 딕셔너리로 만들어두었으니 활용하시면 됩니다. ^^
     genre_dict = {
@@ -50,9 +67,18 @@ def index(request):
     # 템플릿에서는 페이지별 영화정보를 불러오는 for문, 한 페이지의 영화정보들에서 하나씩 영화 정보를 불러오는 for문, 이렇게 2중 for문을 사용해야 합니다... ㅠㅠ   
     genre_movie_list = list()
     for page in range(1, 5):
-        genre_url = 'https://api.themoviedb.org/3/movie/top_rated?api_key={}&language=ko-KR&page={}'.format(api_key, page)
-        genre_response = requests.get(genre_url).json()
-        genre = sorted(genre_response['results'], key=lambda x:x['vote_average'], reverse=True)
+        genre_url = 'https://api.themoviedb.org/3/movie/top_rated'
+
+        params = {
+            'api_key': TMDB_API_KEY,
+            'language': 'ko-kr',
+            'region':'kr',
+            'page': page
+        }
+
+        genre_response = requests.get(genre_url, params=params)
+        genre_data = genre_response.json()
+        genre = sorted(genre_data['results'], key=lambda x:x['vote_average'], reverse=True)
         genre_movie_list.append(genre)
 
     context = {
@@ -61,7 +87,6 @@ def index(request):
         'genre_movie_list': genre_movie_list,
     }
     return render(request, 'posts/index.html', context)
-
 
 # tmdb API를 이용하여 검색한 결과를 가져와 상세정보 출력
 def search(request):
@@ -84,12 +109,20 @@ def search(request):
     for movie in search_data['results']:
         if movie['poster_path']:
             movie['poster_path'] = image_url + movie['poster_path']
-        else:
-            movie['poster_path'] = '이미지 없음'
 
+    # 최신순 정렬
+    sorted_movie = sorted(search_data['results'], key=lambda x:x['release_date'], reverse=True)
+
+    # 페이지네이션
+    page = request.GET.get('page', '1')
+    per_page = 4
+    paginator = Paginator(sorted_movie, per_page)
+    posts = paginator.get_page(page)
 
     context = {
-        'search_data': search_data
+        'search_data': search_data,
+        'posts': posts,
+        'movie_title': movie_title,
     }
 
     return render(request, 'posts/search.html', context)
@@ -107,8 +140,6 @@ def movie_detail(request, movie_id):
     overview = movie_data.get('overview')
     release_date = movie_data.get('release_date')
     poster_path = 'https://image.tmdb.org/t/p/w200' + movie_data.get('poster_path')
-
-    print(poster_path)
 
     # 해당 영화에 쓰인 후기글 가져오기
     reviews = Post.objects.filter(movie_id=movie_id)
