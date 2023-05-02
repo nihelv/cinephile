@@ -9,7 +9,7 @@ import json
 
 def index(request):
     # API_KEY = json.loads(open('secrets.json').read())
-    api_key = 'caea966f6e10b1fbcfc446cd0052d5cd'
+    api_key = 'caea966f6e10b1fbcfc446cd0052d5cd' 
 
     # 최신 상영작을 평점 순으로 나열하여 5개만 불러옵니다.
     now_playing_url = 'https://api.themoviedb.org/3/movie/now_playing?api_key={}&language=ko-KR&page=1&region=KR'.format(api_key)
