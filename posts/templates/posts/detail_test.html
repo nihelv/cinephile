@@ -1,0 +1,20 @@
+{% block content %}
+<h1>{{ title }}</h1>
+  <img src="{{ poster_path }}" alt="이미지 없음">
+  
+  <p>개요: {{ overview }}</p>
+  <p>개봉일: {{ release_date }}</p>
+
+<h2>후기</h2>
+{% if reviews %}
+  {% for review in reviews %}
+    <div>
+      <p>{{ review.content }}</p>
+      <p>작성자: {{ review.user }}</p>
+      <p>작성일: {{ review.created_at }}</p>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>후기가 없습니다.</p>
+{% endif %}
+{% endblock content %}

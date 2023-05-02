@@ -56,8 +56,33 @@ def search(request):
     return render(request, 'posts/search.html', context)
 
 
-def movie_detail(request):
-    pass
+# 영화 상세정보와 그 영화에 쓰인 후기글을 보여줌
+def movie_detail(request, movie_id):
+    TMDB_API_KEY = 'caea966f6e10b1fbcfc446cd0052d5cd'
+    url = f'https://api.themoviedb.org/3/movie/{movie_id}?api_key={TMDB_API_KEY}&language=ko-KR'
+    response = requests.get(url)
+    movie_data = response.json()
+
+    # 필요한 영화 정보 추출
+    title = movie_data.get('title')
+    overview = movie_data.get('overview')
+    release_date = movie_data.get('release_date')
+    poster_path = 'https://image.tmdb.org/t/p/w200' + movie_data.get('poster_path')
+
+    print(poster_path)
+
+    # 해당 영화에 쓰인 후기글 가져오기
+    reviews = Post.objects.filter(movie_id=movie_id)
+
+    context = {
+        'title': title,
+        'overview': overview,
+        'release_date': release_date,
+        'poster_path': poster_path,
+        'reviews': reviews,
+    }
+
+    return render(request, 'posts/detail_test.html', context)
 
 
 def post_detail(request, post_pk):
