@@ -109,13 +109,14 @@ def search(request):
     for movie in search_data['results']:
         if movie['poster_path']:
             movie['poster_path'] = image_url + movie['poster_path']
-        else:
-            movie['poster_path'] = '이미지 없음'
+
+    # 최신순 정렬
+    sorted_movie = sorted(search_data['results'], key=lambda x:x['release_date'], reverse=True)
 
     # 페이지네이션
     page = request.GET.get('page', '1')
     per_page = 4
-    paginator = Paginator(search_data['results'], per_page)
+    paginator = Paginator(sorted_movie, per_page)
     posts = paginator.get_page(page)
 
     context = {
