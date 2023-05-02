@@ -181,7 +181,7 @@ def movie_detail(request, movie_id):
         'reviews': reviews,
     }
 
-    return render(request, 'posts/detail_test.html', context)
+    return render(request, 'posts/movie_detail.html', context)
 
 
 def post_detail(request, post_pk):

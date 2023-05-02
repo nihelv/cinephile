@@ -15,7 +15,7 @@
       <div class="movie-group">
       {% for movie in posts %}
         <article class="movie">
-          <a href="">
+          <a href="{% url 'posts:movie_detail' movie_id=movie.id %}">
             {% if movie.poster_path %}
               <div class="movie-poster">
                 <img src="{{ movie.poster_path }}" alt="{{ movie.title }} 포스터">
