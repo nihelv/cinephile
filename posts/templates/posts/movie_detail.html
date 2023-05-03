@@ -28,6 +28,9 @@
         {% comment %} 
         스타일 필요/carousel적용??
         {% endcomment %}
+        <div>          
+          <a href="{% url 'posts:create' %}" class="btn btn-primary">Create</a>
+        </div>
         <div>
           {% if reviews %}
             {% for review in reviews %}
@@ -41,6 +44,8 @@
             <p>후기가 없습니다.</p>
           {% endif %}
         </div>
+        
+        
       
 
 
