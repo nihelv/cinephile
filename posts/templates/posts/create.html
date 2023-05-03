@@ -1,8 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
-  <form action="{% url 'posts:create' %}" method="POST">
+<div class="container">
+  <div class="card mb-3" style="max-width: 540px;">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="https://image.tmdb.org/t/p/w200/{{ movie.poster_path }}" class="img-fluid rounded-start" alt="#">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">{{ movie.title }}</h5>
+          <p class="card-text">{{ movie.overview|truncatechars:150 }}</p>
+          <p class="card-text"><small class="text-body-secondary">{{ movie.release_date }}</small></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form action="{% url 'posts:create' movie.id %}" method="POST">
     {% csrf_token %}
     {{ form.as_p }}
     <input type="submit">
   </form>
+</div>
 {% endblock content %}

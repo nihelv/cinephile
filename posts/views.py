@@ -193,18 +193,27 @@ def post_detail(request, post_pk):
 
 
 @login_required
-def create(request):
+def create(request, movie_id):
+    TMDB_API_KEY = 'caea966f6e10b1fbcfc446cd0052d5cd'
+    url = f'https://api.themoviedb.org/3/movie/{movie_id}?api_key={TMDB_API_KEY}&language=ko-KR'
+    response = requests.get(url)
+    movie_data = response.json()
+
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
+            post.movie_id = movie_id
             post.user = request.user
+            score = float(request.POST['score'])
+            post.score = score
             post.save()
             return redirect('posts:post_detail', post.pk)
     else:
         form = PostForm()
     context = {
         'form': form,
+        'movie': movie_data,
     }
     return render(request, 'posts/create.html', context)
 
