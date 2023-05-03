@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
 
 # 사용자 정의 회원 가입 Form
 class CustomUserCreationForm(UserCreationForm):
@@ -32,10 +32,56 @@ class CustomUserCreationForm(UserCreationForm):
         }
 
 
+# 로그인 Form
+class CustomAuthenticationForm(AuthenticationForm):
+    username = forms.CharField(
+        label='',
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': '아이디',
+            })
+    )
 
+    password = forms.CharField(
+        label='',
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': '비밀번호',
+            })
+    )
+    
 
 # 사용자 정의 회원 정보 변경 Form
 class CustomUserChangeForm(UserChangeForm):
+    email = forms.EmailField(
+        label='이메일',
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': '이메일',
+            }
+        )
+    )
+    first_name = forms.CharField(
+        label='이름',
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': '이름'
+            }
+        )
+    )
+    last_name = forms.CharField(
+        label='성',
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': '성'
+            }
+        )
+    )
     class Meta(UserChangeForm.Meta):
         model = get_user_model()
         fields = ('email', 'first_name', 'last_name',)

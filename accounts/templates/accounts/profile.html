@@ -200,6 +200,14 @@
     <div class="post-wrapper">
       <div>
         <h3 class="title">나의 리뷰 <span>{{ user.post_set.all|length }}</span></h3>
+        {% for post in user.post_set.all %}
+          <div>
+            <a href="{% url 'posts:post_detail' post.pk %}">
+              <h4>{{ post.title }}</h4>
+              <img src="{{ post.poster_path }}" alt="이미지 없음">
+            </a>
+          </div>
+        {% endfor %}
       </div>
       <div>
         <h3 class="title">나의 댓글 <span>{{ user.comment_set.all|length }}</span></h3>
