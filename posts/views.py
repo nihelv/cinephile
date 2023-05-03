@@ -174,6 +174,7 @@ def movie_detail(request, movie_id):
     reviews = Post.objects.filter(movie_id=movie_id)
 
     context = {
+        'movie_id': movie_id,
         'title': title,
         'overview': overview,
         'release_date': release_date,
