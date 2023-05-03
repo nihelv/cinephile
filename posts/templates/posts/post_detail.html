@@ -5,6 +5,7 @@
     <div class="row">
       <div class="col-8 mx-auto">
         <p>{{ post.title }}</p>
+        <a href="{% url 'accounts:profile' post.user %}">{{ post.user.username }}</a>
         <p>{{ post.content }}</p>
       </div>
     </div>
@@ -15,29 +16,38 @@
       <div class="col-8 mx-auto">
         {% if user.is_authenticated %}
           <div class="post-likes">
+            <form action=" {% url 'posts:post_likes' post.pk %} ">
             {% csrf_token %}
             <button class="like-button {% if request.user in post.like_users.all %}active{% endif %} btn btn-link">
               {% if request.user in post.like_users.all %}
-                <i class="fas fa-heart"></i> Unlike
+              <i class="bi bi-hand-thumbs-up"></i> Unlike
               {% else %}
-                <i class="far fa-heart"></i> Like
+              <i class="bi bi-hand-thumbs-up"></i> Like
               {% endif %}
             </button>
             <span class="like-count">{{ post.like_users.count }}</span>
+            </form>
           </div>
         {% else %}
           <div class="post-likes">
             <button class="like-button btn btn-link" disabled="">
-              <i class="far fa-heart"></i> Like
+              <i class="bi bi-hand-thumbs-up"></i> Like
             </button>
             <span class="like-count">{{ post.like_users.count }}</span>
           </div>
           <p>로그인 후 좋아요를 눌러주세요.</p>
         {% endif %}
+      
       </div>      
     </div>
 
     <hr class="mx-auto" width="70%">
+
+    {% comment %} 
+    포스트에 대한 수정, 삭제
+    코멘트에 대한 좋아요
+    코멘트에 대한 수정, 삭제
+    {% endcomment %}
 
     <div class="row">
       <div class="col-8 mx-auto">
