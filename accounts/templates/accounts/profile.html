@@ -53,6 +53,7 @@
         </div>
       {% endif %}
     </div>
+
     <div class="profile-content">
       <div class="profile-gap"></div>
       <div class="review-wrap">
@@ -60,13 +61,9 @@
           <h3 class="title">나의 리뷰 <span>{{ user.post_set.all|length }}</span></h3>
           <div class="wrap">
             {% for review in user.post_set.all %}
-              <a href="{% url 'posts:post_detail' review.pk %}" class="review">
-                <div>
-                  <div class="movie-poster">
-                    <img src="https://an2-img.amz.wtchn.net/image/v2/TIxhP_uofjSnN1Wc00igqA.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk56YzFOamN5TmpZek56SXdNVFUwTURRaWZRLmNnT3BLOC1QVEV4bDByQWdJY2dIWWVaOURWZlA4Sk9uVTNVTC1FYXg1T1E" alt="">
-                  </div>
-                  <p>{{ review.title }}</p>
-                </div>
+              <a href="{% url 'posts:post_detail' post.pk %}">
+              <h4>{{ post.title }}</h4>
+              <img src="{{ post.poster_path }}" alt="이미지 없음">
               </a>
             {% endfor %}
           </div>
@@ -89,6 +86,7 @@
         <div>
           <h3 class="title">좋아요</h3>
         </div>
+>>>>>>> master
       </div>
     </div>
   </div>

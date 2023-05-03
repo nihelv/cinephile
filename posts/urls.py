@@ -5,6 +5,7 @@ app_name = 'posts'
 urlpatterns = [
     path('', views.index, name='index'),
     path('search/', views.search, name='search'),
+    # path('search/delete/', views.search_delete, name='search_delete'),
     path('movie_detail/<int:movie_id>/', views.movie_detail, name='movie_detail'),
     path('create/<int:movie_id>/', views.create, name='create'),
     path('<int:post_pk>/', views.post_detail, name='post_detail'),

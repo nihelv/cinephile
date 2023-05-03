@@ -23,8 +23,9 @@
                     <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
                   </div>
                   <div class="movie-category">
-                    <span># {{ movie.genre_ids.0 }}</span>
-                    <span># {{ movie.genre_ids.1 }}</span>
+                    {% load custom_filters %}
+                    <span># {{ genre_dict|get_genre_name:movie.genre_ids.0 }}</span>
+                    <span># {{ genre_dict|get_genre_name:movie.genre_ids.1 }}</span>
                   </div>
                 </div>
               </a>

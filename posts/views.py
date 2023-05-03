@@ -5,6 +5,7 @@ from accounts.forms import CustomUserCreationForm
 from .forms import PostForm, CommentForm
 from .models import Post, Comment
 from django.core.paginator import Paginator
+# from django.http import HttpResponseRedirect
 import requests
 import json
 import random
@@ -116,10 +117,12 @@ def index(request):
         'genre_movie_list': genre_movie_list,
         'trending': trending,
         'random_movie': random_movie,
+        'genre_dict': genre_dict,
         'login_form': AuthenticationForm(),
         'signup_form': CustomUserCreationForm(),
     }
     return render(request, 'posts/index.html', context)
+
 
 # tmdb API를 이용하여 검색한 결과를 가져와 상세정보 출력
 def search(request):
@@ -143,6 +146,7 @@ def search(request):
         if movie['poster_path']:
             movie['poster_path'] = image_url + movie['poster_path']
 
+
     # 최신순 정렬
     sorted_movie = sorted(search_data['results'], key=lambda x:x['release_date'], reverse=True)
 
@@ -152,13 +156,30 @@ def search(request):
     paginator = Paginator(sorted_movie, per_page)
     posts = paginator.get_page(page)
 
+    # 검색 기록 가져오기
+    # search_history = Search_history.objects.filter(user=request.user).order_by('-history')[:5]
+
+    # if movie_title and not Search_history.objects.filter(search=movie_title, user=request.user).exists():
+    #     Search_history.objects.create(search=movie_title, user=request.user)
+
     context = {
         'search_data': search_data,
         'posts': posts,
         'movie_title': movie_title,
+        # 'search_history': search_history,
     }
 
     return render(request, 'posts/search.html', context)
+
+
+# # 현재 사용자의 모든 검색 기록을 삭제
+# def search_delete(request):
+#     if request.method == 'POST':
+#         search_id = request.POST.get('search_id')
+#         Search_history.objects.filter(id=search_id, user=request.user).delete()
+#     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+#     # return redirect('posts:search')
+
 
 
 # 영화 상세정보와 그 영화에 쓰인 후기글을 보여줌
@@ -204,12 +225,15 @@ def create(request, movie_id):
     response = requests.get(url)
     movie_data = response.json()
 
+    poster_path = 'https://image.tmdb.org/t/p/w200' + movie_data.get('poster_path')
+
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
             post.movie_id = movie_id
             post.user = request.user
+            post.poster_path = poster_path
             score = float(request.POST['score'])
             post.score = score
             post.save()

@@ -4,10 +4,23 @@
   회원정보수정
 {% endblock title %}
 
+{% block style %}
+  .accounts {
+    max-width: 300px;
+    height: 100%;
+    margin: 1rem auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+{% endblock style %}
+
 {% block content %}
+<section class="accounts">
   <form action="{% url 'accounts:update' %}" method="POST">
     {% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="회원정보 수정">
   </form>
+</section>
 {% endblock content %}
