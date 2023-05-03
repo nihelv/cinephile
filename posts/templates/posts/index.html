@@ -12,16 +12,15 @@
             <article class="movie">
               <a class="movie-link" href="{% url 'posts:movie_detail' movie.id %}">
                 <div class="movie-poster">
-                  <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
+                  <img src="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}" alt="">
                   <div class="movie-ranking">
                     <p class="movie-ranking-number"></p>
                   </div>
                 </div>
                 <div class="movie-info">
-                  <p class="title">{{ movie.title }}</p>
-                  <div class="movie-review">
-                    <div class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</div>
-                    <span>후기 {{ movie.vote_count }}</span>
+                  <div class="d-flex justify-content-between mb-1 px-1">
+                    <p class="title">{{ movie.title }}</p>
+                    <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
                   </div>
                   <div class="movie-category">
                     {% load custom_filters %}
@@ -35,9 +34,9 @@
         </div>
       </section>
     
-      <section class="banner container my-5">
+      <section class="banner container">
         <h5 class="banner-text">~랜덤뽑기 문구~</h5>
-        <a href="" class="banner-button">랜덤 영화 보기</a>
+        <a href="{% url 'posts:movie_detail' random_movie.id %}" class="banner-button">랜덤 영화 보기</a>
       </section>
     
       <section class="content container">
@@ -47,7 +46,7 @@
         <div class="movie-group">
           {% for movie in top_rated %}
             <article class="movie">
-              <a class="movie-link" href="">
+              <a class="movie-link" href="{% url 'posts:movie_detail' movie.id %}">
                 <div class="movie-poster">
                   <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
                   <div class="movie-ranking">
@@ -55,10 +54,9 @@
                   </div>
                 </div>
                 <div class="movie-info">
-                  <p class="title">{{ movie.title }}</p>
-                  <div class="movie-review">
-                    <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
-                    <span>후기 {{ movie.vote_count }}</span>
+                  <div class="d-flex justify-content-between mb-1 px-1">
+                    <p class="title">{{ movie.title }}</p>
+                    <sapn class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</sapn>
                   </div>
                   <div class="movie-category">
                     <span># {{ movie.genre_ids }}</span>
