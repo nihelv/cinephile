@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
+from accounts.forms import CustomUserCreationForm
 from .forms import PostForm, CommentForm
 from .models import Post, Comment
 from django.core.paginator import Paginator
@@ -92,7 +94,7 @@ def index(request):
 
     trending_response = requests.get(trending_url, params=params)
     trending_data = trending_response.json()
-    trending = trending_data['results'][:5]
+    trending = trending_data['results'][:10]
 
     # 랜덤 영화 추천
     random_url = 'https://api.themoviedb.org/3/discover/movie'
@@ -113,7 +115,9 @@ def index(request):
         'top_rated': top_rated,
         'genre_movie_list': genre_movie_list,
         'trending': trending,
-        'random_movie': random_movie
+        'random_movie': random_movie,
+        'login_form': AuthenticationForm(),
+        'signup_form': CustomUserCreationForm(),
     }
     return render(request, 'posts/index.html', context)
 
@@ -144,7 +148,7 @@ def search(request):
 
     # 페이지네이션
     page = request.GET.get('page', '1')
-    per_page = 4
+    per_page = 20
     paginator = Paginator(sorted_movie, per_page)
     posts = paginator.get_page(page)
 

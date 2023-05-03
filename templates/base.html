@@ -49,9 +49,13 @@
         </div>
         <div class="modal-body">
           <p class="modal-title fw-bold" id="loginModalLabel">로그인</p>
-          <form action="{% url 'accounts:login' %}" method="POST" id="login-form">
+          <form id="login-form">
             {% csrf_token %}
-            {{ login_form.as_p }}
+            {% for field in login_form %}
+              <div class="mb-2">
+                {{ field }}
+              </div>
+            {% endfor %}
             <input type="submit" class="btn main-btn" value="로그인">
           </form>
           <div class="other-link">
@@ -71,7 +75,7 @@
         </div>
         <div class="modal-body">
           <p class="modal-title fw-bold" id="loginModalLabel">회원가입</p>
-          <form action="{% url 'accounts:signup' %}" method="POST" id="signup-form">
+          <form id="signup-form">
             {% csrf_token %}
             {% for field in signup_form %}
               <div class="mb-2">
@@ -108,90 +112,24 @@
       </div>
       <div class="keyword-ranking-wrap">
         <div class="keyword-ranking" id="slider">
-          <div class="keyword">
-            <p class="keyword-number">1</p>
-            <p class="keyword-text">드림</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">2</p>
-            <p class="keyword-text">슈퍼 마리오 브라더스</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">3</p>
-            <p class="keyword-text">존 윅</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">4</p>
-            <p class="keyword-text">스즈메의 문단속</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">5</p>
-            <p class="keyword-text">더 퍼스트 슬램덩크</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">6</p>
-            <p class="keyword-text">옥수역 귀신</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">7</p>
-            <p class="keyword-text">리바운드</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">8</p>
-            <p class="keyword-text">무명</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">9</p>
-            <p class="keyword-text">킬링로맨스</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">10</p>
-            <p class="keyword-text">2001 스페이스 오디세이</p>
-          </div>
+          {% for movie in trending %}
+            <div class="keyword">
+              <p class="keyword-number"></p>
+              <p class="keyword-text">{{ movie.title }}</p>
+            </div>
+          {% endfor %}
         </div>
         <button class="keyword-button"><i class="bi bi-chevron-down"></i></button>
         <div class="keyword-ranking" id="ranking-list">
-          <p class="fw-bold p-3">인기 검색어</p>
-          <div class="keyword">
-            <p class="keyword-number">1</p>
-            <p class="keyword-text">드림</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">2</p>
-            <p class="keyword-text">슈퍼 마리오 브라더스</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">3</p>
-            <p class="keyword-text">존 윅</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">4</p>
-            <p class="keyword-text">스즈메의 문단속</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">5</p>
-            <p class="keyword-text">더 퍼스트 슬램덩크</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">6</p>
-            <p class="keyword-text">옥수역 귀신</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">7</p>
-            <p class="keyword-text">리바운드</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">8</p>
-            <p class="keyword-text">무명</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">9</p>
-            <p class="keyword-text">킬링로맨스</p>
-          </div>
-          <div class="keyword">
-            <p class="keyword-number">10</p>
-            <p class="keyword-text">2001 스페이스 오디세이</p>
-          </div>
+          <p class="fw-bold px-3 py-2">인기 검색어</p>
+          {% for movie in trending %}
+            <a href="{% url 'posts:movie_detail' movie.id %}">
+              <div class="keyword">
+                <p class="keyword-number"></p>
+                <p class="keyword-text">{{ movie.title }}</p>
+              </div>
+            </a>
+          {% endfor %}
         </div>
       </div>
     </div>
@@ -221,133 +159,8 @@
       </div>
     </div>
   </footer>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+  <script src="{% static 'script.js' %}"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script>
-    const header = document.querySelector('.header')
-    let prevScrollTop = 0
-
-    const headerMoving = function(direction) {
-      if (direction == 'up') {
-        header.classList.remove('nav-up')
-      } else {
-        header.classList.add('nav-up')
-      }
-    }
-
-    document.addEventListener('scroll', function() {
-      let nextScrollTop = window.pageYOffset
-      if (nextScrollTop > prevScrollTop) {
-        headerMoving('down')
-      } else if (nextScrollTop < prevScrollTop) {
-        headerMoving('up')
-      }
-
-      prevScrollTop = nextScrollTop
-    })
-
-    function Slider(target) {
-      let index = 1;
-      let isMoved = true;
-      const speed = 1500; // ms
-    
-      const transform = "transform " + speed / 1000 + "s";
-      let translate = (i) => "translateY(-" + 100 * i + "%)";
-    
-      const slider = document.querySelector(target);
-      const sliderRects = slider.getClientRects()[0];
-      slider.style["overflow"] = "hidden";
-  
-      const container = document.createElement("div");
-      container.style["display"] = "flex";
-      container.style["flex-direction"] = "column";
-      container.style["width"] = sliderRects.width + "px";
-      container.style["height"] = sliderRects.height / 10 + "px";
-      container.style["transform"] = translate(index);
-    
-      let boxes = [].slice.call(slider.children);
-      boxes = [].concat(boxes[boxes.length - 1], boxes, boxes[0]);
-    
-      const size = boxes.length;
-      for (let i = 0; i < size; i++) {
-        const box = boxes[i];
-        box.style["height"] = "100%";
-        box.style["width"] = "100%";
-        container.appendChild(box.cloneNode(true));
-      }
-    
-      container.addEventListener("transitionstart", function () {
-        isMoved = false;
-        setTimeout(() => {
-          isMoved = true;
-        }, speed);
-      });
-      container.addEventListener("transitionend", function () {
-        if (index === size - 1) {
-          index = 1;
-          container.style["transition"] = "none";
-          container.style["transform"] = translate(index);
-        }
-        if (index === 0) {
-          index = size - 1;
-          container.style["transition"] = "none";
-          container.style["transform"] = translate(index);
-        }
-      });
-    
-      slider.innerHTML = "";
-      slider.appendChild(container);
-    
-      return {
-        move: function (i) {
-          if (isMoved === true) {
-            index = i;
-            container.style["transition"] = transform;
-            container.style["transform"] = translate(index);
-          }
-        },
-        next: function () {
-          if (isMoved === true) {
-            index = (index + 1) % size;
-            container.style["transition"] = transform;
-            container.style["transform"] = translate(index);
-          }
-        },
-        prev: function () {
-          if (isMoved === true) {
-            index = index === 0 ? index + size : index;
-            index = (index - 1) % size;
-            container.style["transition"] = transform;
-            container.style["transform"] = translate(index);
-          }
-        }
-      };
-    }
-    
-    const s1 = new Slider("#slider");
-    
-    setInterval(() => {
-      s1.next();
-    }, 1500)
-
-    const loginForm = document.querySelector('#login-form')
-    const signupForm = document.querySelector('#signup-form')
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
-
-    loginForm.addEventListener('submit', function (event) {
-      event.preventDefault()
-      axios({
-        method: 'post',
-        url: '/accounts/login/',
-        headers: {'X-CSRFToken': csrftoken}
-      })
-    })
-
-    {% block script %}
-    
-    {% endblock script %}
-  </script>
-</body>
 </body>
 </html>
