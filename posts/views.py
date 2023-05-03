@@ -193,7 +193,8 @@ def movie_detail(request, movie_id):
     title = movie_data.get('title')
     overview = movie_data.get('overview')
     release_date = movie_data.get('release_date')
-    poster_path = 'https://image.tmdb.org/t/p/w200' + movie_data.get('poster_path')
+    poster_path = 'https://image.tmdb.org/t/p/w500' + movie_data.get('poster_path')
+    genres = movie_data.get('genres', [])
 
     # 해당 영화에 쓰인 후기글 가져오기
     reviews = Post.objects.filter(movie_id=movie_id)
