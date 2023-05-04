@@ -7,8 +7,7 @@ from .models import Post, Comment
 from django.core.paginator import Paginator
 # from django.http import HttpResponseRedirect
 import requests
-import json
-import random
+import random, datetime
 
 
 def index(request):
@@ -111,12 +110,29 @@ def index(request):
     random_data = random_response.json()
     random_movie = random.choice(random_data['results'])
 
+    # 상영예정작 영화를 5개만 불러옵니다.
+    upcoming_url = 'https://api.themoviedb.org/3/movie/upcoming'
+
+    params = {
+        'api_key': TMDB_API_KEY,
+        'language': 'ko-kr',
+        'region':'kr',
+        'page': 1
+    }
+
+    upcoming_response = requests.get(upcoming_url, params=params)
+    upcoming_data = upcoming_response.json()
+    upcoming = sorted(upcoming_data['results'], key=lambda x:x['release_date'])[:5]
+    current_date = datetime.date.today()
+
     context = {
         'now_playing': now_playing,
         'top_rated': top_rated,
         'genre_movie_list': genre_movie_list,
         'trending': trending,
         'random_movie': random_movie,
+        'upcoming': upcoming,
+        'current_date': current_date,
         'genre_dict': genre_dict,
         'login_form': CustomAuthenticationForm(),
         'signup_form': CustomUserCreationForm(),
@@ -189,10 +205,23 @@ def movie_detail(request, movie_id):
     response = requests.get(url)
     movie_data = response.json()
 
+    # 영화의 한국 기준 개봉일자를 불러옵니다.
+    release_dates_url = f'https://api.themoviedb.org/3/movie/{movie_id}/release_dates?api_key={TMDB_API_KEY}'
+    release_dates_response = requests.get(release_dates_url)
+    release_data = release_dates_response.json()
+
+    for data in release_data['results']:
+        if data["iso_3166_1"] == "KR":
+            for date in data["release_dates"]:
+                release_date = data["release_dates"][-1].get("release_date")
+            break
+    else:
+        release_date = ''
+
     # 필요한 영화 정보 추출
     title = movie_data.get('title')
     overview = movie_data.get('overview')
-    release_date = movie_data.get('release_date')
+    # release_date = movie_data.get('release_date')
     poster_path = 'https://image.tmdb.org/t/p/w500' + movie_data.get('poster_path')
     genres = movie_data.get('genres', [])
 
@@ -203,7 +232,7 @@ def movie_detail(request, movie_id):
         'movie_id': movie_id,
         'title': title,
         'overview': overview,
-        'release_date': release_date,
+        'release_date': release_date[:10],
         'poster_path': poster_path,
         'reviews': reviews,
     }
