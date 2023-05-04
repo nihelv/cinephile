@@ -5,6 +5,7 @@ from django.conf import settings
 class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     movie_id = models.IntegerField()
+    movie_title = models.CharField(max_length=50)
     title = models.CharField(max_length=50)
     content = models.TextField()
     score = models.FloatField(null=True)
@@ -20,6 +21,9 @@ class Comment(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_comments')
+    
+    def get_movie_title(self):
+        return self.post.movie_title
 
 
 # class Search_history(models.Model):
