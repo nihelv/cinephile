@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="d-flex">
@@ -6,22 +7,21 @@
     <h2 class="mb-4">{{ title }}</h2>
     <div class="row">
         <div class="col-md-8 mx-auto">
-            {% if poster_path %}
-            <img src="{{ poster_path }}" class="img-fluid mb-4">
-            {% else %}
-            <p>No image available.</p>
-            {% endif %}
-            <div class='row'>
-            <p class='col-3 my-1 py-3'><strong>개봉일자:</strong></p><p class='col-9'>{{ release_date }}</p>
-            <p class='my-1 py-3'><strong>장르:</strong>
+          {% if poster_path %}
+          <img src="{{ poster_path }}" class="img-fluid mb-4">
+          {% else %}
+          <img src="{% static 'no-photo.png' %}" alt='포스터가 없습니다'>
+          {% endif %}
+            <div class='row justify-content-center'>
+            <p class='col-4 my-1 p-3'><strong>개봉일자</strong></p><p class='col-6 text-start p-3 my-1'>{{ release_date }}</p>
+            <p class='col-4 my-1 p-3'><strong>장르</strong></p>
+            <p class='col-6 my-1 text-start p-3'>
               {% for genre in genres %}
               {{ genre.name }}{% if not forloop.last %}, {% endif %}
               {% endfor %}
-            </p>
-          </div>
-            <div class='row justify-content-center'>
-              <p class='col-3 p-5'><strong>줄거리</strong></p>
-              <div class='col-9 text-start p-3'>{{ overview }}</div>
+            </p>                    
+            <p class='col-4 my-1 pt-3'><strong>줄거리</strong></p>
+            <div class='col-6 my-1 text-start p-3'>{{ overview }}</div>
             </div>
         </div>
         <hr class='m-5' width=70%>
