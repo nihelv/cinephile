@@ -1,31 +1,44 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container">
-  <div class="card mb-3" style="max-width: 540px;">
-    <div class="row g-0">
-      <div class="col-md-4">
-        <img src="https://image.tmdb.org/t/p/w200/{{ movie.poster_path }}" class="img-fluid rounded-start" alt="#">
-      </div>
-      <div class="col-md-8">
-        <div class="card-body">
-          <h5 class="card-title">{{ movie.title }}</h5>
-          <p class="card-text">{{ movie.overview|truncatechars:150 }}</p>
-          <p class="card-text"><small class="text-body-secondary">{{ movie.release_date }}</small></p>
+<div class="container d-flex justify-content-center">
+  <div class="card border-0" style="width: 600px;">
+    <div class="card mb-3 border-0">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="https://image.tmdb.org/t/p/w200/{{ movie.poster_path }}" class="img-fluid rounded" alt="#">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body h-100">
+            <ul class="list-group list-group-flush d-flex flex-column h-100">
+              <li class="list-group-item"><h3><strong>{{ movie.title }}</strong></h3></li>
+              <li class="list-group-item flex-grow-1">{{ movie.overview|truncatechars:200 }}</li>
+              <li class="list-group-item">개봉일: {{ movie.release_date }}</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
+    <ul class="list-group list-group-flush">
+      <form action="{% url 'posts:create' movie.id %}" method="POST">
+        {% csrf_token %}
+        <li class="list-group-item border-0 px-0">
+          <div class="rating">
+            <label>평점: </label>
+            <div id="rating-stars"></div>
+            <input type="hidden" id="score-input" name="score" value="0">
+          </div>
+        </li>
+        {% for f in form %}
+        <li class="list-group-item border-0 px-0">{{ f }}</li>
+        {% endfor %}
+        <li class="list-group-item border-0 d-flex justify-content-end px-0">
+          <input class="btn btn-primary w-100" type="submit">
+        </li>
+      </form>
+    </ul>
   </div>
-  <form action="{% url 'posts:create' movie.id %}" method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <div class="rating">
-      <label>평점:</label>
-      <div id="rating-stars"></div>
-      <input type="hidden" id="score-input" name="score" value="0">
-    </div>
-    <input type="submit">
-  </form>
-  
+</div>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
