@@ -244,6 +244,7 @@ def post_detail(request, post_pk):
     post = Post.objects.get(pk=post_pk)
     context = {
         'post': post,
+        'form': CommentForm()
     }
     return render(request, 'posts/post_detail.html', context)
 
@@ -256,7 +257,7 @@ def create(request, movie_id):
     movie_data = response.json()
 
     poster_path = 'https://image.tmdb.org/t/p/w200' + movie_data.get('poster_path')
-
+    
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
@@ -264,6 +265,7 @@ def create(request, movie_id):
             post.movie_id = movie_id
             post.user = request.user
             post.poster_path = poster_path
+            post.movie_title = movie_data.get('title')
             score = float(request.POST['score'])
             post.score = score
             post.save()
