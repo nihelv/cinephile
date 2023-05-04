@@ -192,6 +192,16 @@ def movie_detail(request, movie_id):
     response = requests.get(url)
     movie_data = response.json()
 
+    # 필요한 영화 정보 추출
+    title = movie_data.get('title')
+    overview = movie_data.get('overview')
+    # release_date = movie_data.get('release_date')
+    poster_path = 'https://image.tmdb.org/t/p/w500' + movie_data.get('poster_path')
+    genres = movie_data.get('genres', [])
+
+    # 해당 영화에 쓰인 후기글 가져오기
+    reviews = Post.objects.filter(movie_id=movie_id)
+
     # 영화의 한국 기준 개봉일자를 불러옵니다.
     release_dates_url = f'https://api.themoviedb.org/3/movie/{movie_id}/release_dates?api_key={TMDB_API_KEY}'
     release_dates_response = requests.get(release_dates_url)
@@ -204,15 +214,14 @@ def movie_detail(request, movie_id):
     else:
         release_date = ''
 
-    # 필요한 영화 정보 추출
-    title = movie_data.get('title')
-    overview = movie_data.get('overview')
-    # release_date = movie_data.get('release_date')
-    poster_path = 'https://image.tmdb.org/t/p/w500' + movie_data.get('poster_path')
-    genres = movie_data.get('genres', [])
+    # 영화의 cast 정보(5명)가 credits에 저장되어 있습니다.
+    # 템플릿에서는 for문을 사용하셔서 한 명씩 정보를 불러와 사용하시면 됩니다.
+    # 배우 이름은 credits.name, 역할(캐릭터) 이름은 credits.character로 불러오시면 됩니다.
+    credits_url = f'https://api.themoviedb.org/3/movie/{movie_id}/credits?api_key={TMDB_API_KEY}&language=ko-kr'
+    credits_response = requests.get(credits_url)
+    credits_data = credits_response.json()
+    credits = credits_data['cast'][:5]
 
-    # 해당 영화에 쓰인 후기글 가져오기
-    reviews = Post.objects.filter(movie_id=movie_id)
 
     context = {
         'movie_id': movie_id,
@@ -221,7 +230,8 @@ def movie_detail(request, movie_id):
         'release_date': release_date[:10],
         'poster_path': poster_path,
         'reviews': reviews,
-        'genres' : genres
+        'genres' : genres,
+        'credits': credits,
     }
 
     return render(request, 'posts/movie_detail.html', context)
