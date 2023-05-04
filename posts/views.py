@@ -212,8 +212,7 @@ def movie_detail(request, movie_id):
 
     for data in release_data['results']:
         if data["iso_3166_1"] == "KR":
-            for date in data["release_dates"]:
-                release_date = data["release_dates"][-1].get("release_date")
+            release_date = data["release_dates"][-1].get("release_date")
             break
     else:
         release_date = ''
