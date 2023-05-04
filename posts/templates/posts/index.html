@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load custom_filters %}
 
 {% block content %}
   <div class="tab-content" id="pills-tabContent">
@@ -23,9 +24,10 @@
                     <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
                   </div>
                   <div class="movie-category">
-                    {% load custom_filters %}
                     <span># {{ genre_dict|get_genre_name:movie.genre_ids.0 }}</span>
-                    <span># {{ genre_dict|get_genre_name:movie.genre_ids.1 }}</span>
+                    {% if movie.genre_ids.1 %}
+                      <span># {{ genre_dict|get_genre_name:movie.genre_ids.1 }}</span>
+                    {% endif %}
                   </div>
                 </div>
               </a>
@@ -59,8 +61,10 @@
                     <sapn class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</sapn>
                   </div>
                   <div class="movie-category">
-                    <span># {{ movie.genre_ids }}</span>
-                    <span># 코미디</span>
+                    <span># {{ genre_dict|get_genre_name:movie.genre_ids.0 }}</span>
+                    {% if movie.genre_ids.1 %}
+                      <span># {{ genre_dict|get_genre_name:movie.genre_ids.1 }}</span>
+                    {% endif %}
                   </div>
                 </div>
               </a>
@@ -185,14 +189,15 @@
                       </div> {% endcomment %}
                     </div>
                     <div class="movie-info">
-                      <p class="title">{{ movie.title }}</p>
-                      <div class="movie-review">
-                        <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
-                        <span>후기 {{ movie.vote_count }}</span>
+                      <div class="d-flex justify-content-between mb-1 px-1">
+                        <p class="title">{{ movie.title }}</p>
+                        <sapn class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</sapn>
                       </div>
                       <div class="movie-category">
-                        <span># {{ movie.genre_ids }}</span>
-                        <span># 코미디</span>
+                        <span># {{ genre_dict|get_genre_name:movie.genre_ids.0 }}</span>
+                        {% if movie.genre_ids.1 %}
+                          <span># {{ genre_dict|get_genre_name:movie.genre_ids.1 }}</span>
+                        {% endif %}
                       </div>
                     </div>
                   </a>
@@ -222,14 +227,15 @@
                       </div> {% endcomment %}
                     </div>
                     <div class="movie-info">
-                      <p class="title">{{ movie.title }}</p>
-                      <div class="movie-review">
-                        <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
-                        <span>후기 {{ movie.vote_count }}</span>
+                      <div class="d-flex justify-content-between mb-1 px-1">
+                        <p class="title">{{ movie.title }}</p>
+                        <sapn class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</sapn>
                       </div>
                       <div class="movie-category">
-                        <span># {{ movie.genre_ids }}</span>
-                        <span># 코미디</span>
+                        <span># {{ genre_dict|get_genre_name:movie.genre_ids.0 }}</span>
+                        {% if movie.genre_ids.1 %}
+                          <span># {{ genre_dict|get_genre_name:movie.genre_ids.1 }}</span>
+                        {% endif %}
                       </div>
                     </div>
                   </a>
@@ -259,14 +265,15 @@
                       </div> {% endcomment %}
                     </div>
                     <div class="movie-info">
-                      <p class="title">{{ movie.title }}</p>
-                      <div class="movie-review">
-                        <span class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</span>
-                        <span>후기 {{ movie.vote_count }}</span>
+                      <div class="d-flex justify-content-between mb-1 px-1">
+                        <p class="title">{{ movie.title }}</p>
+                        <sapn class="rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average }}</sapn>
                       </div>
                       <div class="movie-category">
-                        <span># {{ genre_dict }}</span>
-                        <span># 코미디</span>
+                        <span># {{ genre_dict|get_genre_name:movie.genre_ids.0 }}</span>
+                        {% if movie.genre_ids.1 %}
+                          <span># {{ genre_dict|get_genre_name:movie.genre_ids.1 }}</span>
+                        {% endif %}
                       </div>
                     </div>
                   </a>

@@ -392,9 +392,9 @@ img {
   color: #35c5f0;
 }
 
-.bi::before {
+/* .bi::before {
   vertical-align: -0.175rem;
-}
+} */
 
 .movie-category span {
   padding: 0.125rem 0.5rem 0.25rem;
@@ -464,7 +464,7 @@ img {
 }
 
 .movie-title {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   font-size: 1.25rem;
   font-weight: bold;
   overflow: hidden;
@@ -665,7 +665,7 @@ img {
 
 .review-group .wrap {
   border: none;
-  padding: 1rem 0;
+  padding-bottom: 1rem;
   width: auto;
   display: flex;
   overflow-x: scroll;

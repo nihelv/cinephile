@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from accounts.forms import CustomUserCreationForm
+from accounts.forms import CustomUserCreationForm, CustomAuthenticationForm
 from .forms import PostForm, CommentForm
 from .models import Post, Comment
 from django.core.paginator import Paginator
@@ -118,7 +118,7 @@ def index(request):
         'trending': trending,
         'random_movie': random_movie,
         'genre_dict': genre_dict,
-        'login_form': AuthenticationForm(),
+        'login_form': CustomAuthenticationForm(),
         'signup_form': CustomUserCreationForm(),
     }
     return render(request, 'posts/index.html', context)

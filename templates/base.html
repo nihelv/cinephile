@@ -91,7 +91,7 @@
         </div>
         <div class="modal-body">
           <p class="modal-title fw-bold" id="loginModalLabel">회원가입</p>
-          <form id="signup-form">
+          <form action="{% url 'accounts:signup' %}" method="POST" id="signup-form">
             {% csrf_token %}
             {% for field in signup_form %}
               <div class="mb-2">
