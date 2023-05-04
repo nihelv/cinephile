@@ -47,7 +47,7 @@
       <div class="col-8 mx-auto">
         {% if post.comment_set.all %}
         {% for comment in post.comment_set.all %}
-        <div class=>
+        <div>
             <p>{{ comment.content }}</p>
             <div class='small text-end row'>
               <p class='col-8'>{{ comment.user.username }}</p>
@@ -70,14 +70,12 @@
                 {% endif %}
               {% endif %}
             </div>
-            
+            {% endfor %}
         </div>
-        {% empty %}
-            <p>아직 댓글이 없습니다.</p>
-        {% endfor %}
+        {% else %}
+            <p class='my-5'>아직 댓글이 없습니다.</p>
         {% endif %}
-      </div>
-      
+      </div>      
   
     <hr class="mx-auto" width="70%">
   
