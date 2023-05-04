@@ -5,7 +5,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import CustomUserCreationForm, CustomUserChangeForm, CustomAuthenticationForm
-
+from django.http import JsonResponse
 
 # 로그인 view
 def login(request):
@@ -13,18 +13,20 @@ def login(request):
         return redirect('posts:index')
     
     if request.method == 'POST':
-        form = CustomAuthenticationForm(request,request.POST)
+        form = CustomAuthenticationForm(request, request.POST)
         if form.is_valid():
             auth_login(request, form.get_user())
-            return redirect('posts:index')
+            return JsonResponse({'valid': True})
     else:
         form = CustomAuthenticationForm()
     
+    error = form.errors
     context = {
-        'form': form,
+        # 'form': form,
+        'valid': False,
+        'error': error,
     }
-
-    return render(request, 'accounts/login.html', context)
+    return JsonResponse(context)
 
 
 # 로그아웃 view
@@ -44,9 +46,20 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             auth_login(request, user)
+            return JsonResponse({'valid': True})
             return redirect('posts:index')
     else:
         form = CustomUserCreationForm()
+
+    error = form.errors
+    print(list(error.keys()))
+    context = {
+        # 'form': form,
+        'valid': False,
+        'error_field': list(error.keys())[0],
+        'error': error,
+    }
+    return JsonResponse(context)
     context = {
         'form': form,
     }
@@ -89,7 +102,16 @@ def follow(request, user_pk):
     if person != request.user:
         if request.user in person.followers.all():
             person.followers.remove(request.user)
+            is_followed = False
         else:
             person.followers.add(request.user)
+            is_followed = True
+
+        context = {
+            'is_followed': is_followed,
+            'following_count': person.followings.count(),
+            'follower_count': person.followers.count(),
+        }
+        return JsonResponse(context)
             
     return redirect('accounts:profile', person.get_username)

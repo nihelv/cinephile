@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
   {{ person.username }}님의 프로필
@@ -16,23 +17,23 @@
           <div class="user-follow-wrap">
             <div class="user-follow">
               <p class="user-follow-text">팔로잉</p>
-              <a href="" class="user-count">{{ person.followings.all|length }}</a>
+              <button type="button" id="following-count" class="user-count" data-bs-toggle="modal" data-bs-target="#followingModal">{{ person.followings.all|length }}</button>
             </div>
             <div class="user-follow">
               <p class="user-follow-text">팔로워</p>
-              <a href="" class="user-count">{{ person.followers.all|length }}</a>
+              <button type="button" id="follower-count" class="user-count" data-bs-toggle="modal" data-bs-target="#followerModal">{{ person.followers.all|length }}</button>
             </div>
           </div>
           <div class="user-btn">
             {% if user == person %}
               <a href="{% url 'accounts:update' %}" class="update-btn">설정</a>
             {% endif %}
-            {% if request.user != person %}
+            {% if user != person %}
               <div class="follow-btn">
-                <form action="{% url 'accounts:follow' person.pk %}" method="POST">
+                <form class="follow-form" data-user-id="{{ person.pk }}">
                   {% csrf_token %}
                   {% if request.user in person.followers.all %}
-                    <input type="submit" value="언팔로우" class="btn main-btn fw-bold">
+                    <input type="submit" value="언팔로우" class="btn main-outline-btn fw-bold">
                   {% else %}
                     <input type="submit" value="팔로우" class="btn main-btn fw-bold">
                   {% endif %}
@@ -47,44 +48,157 @@
           <div class="user-mark">
             <svg width="24" height="24" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet"><path fill="currentColor" d="M22.971 7.638c-.548-5.17-7.119-7.135-10.57-2.488a.5.5 0 0 1-.802 0C8.148.503 1.577 2.469 1.029 7.625.642 12.451 3.897 17.183 12 21.436c8.104-4.252 11.36-8.984 10.972-13.798zm.996-.093c.428 5.319-3.137 10.446-11.738 14.899a.5.5 0 0 1-.46 0C3.169 17.99-.395 12.864.034 7.532.656 1.67 7.904-.683 12 4.052 16.096-.683 23.344 1.67 23.967 7.545z"></path></svg>
             <p>좋아요</p>
-            {% comment %} 유저가 좋아요 누른 게시글 수를 표시하고 싶은데 아래처럼 하면 될까요? {% endcomment %}
-            <p class="user-count">{{ user.like_posts.all|length }}</p>
+            <p class="user-count">{{ person.like_posts.all|length }}</p>
           </div>
         </div>
       {% endif %}
+    </div>
+
+    <!-- 팔로잉 Modal -->
+    <div class="modal fade" id="followingModal" tabindex="-1" aria-labelledby="followingModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="followingModalLabel">팔로잉 목록</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {% for following in person.followings.all %}
+              <div class="d-flex justify-content-between">
+                <a href="{% url 'accounts:profile' following %}">{{ following }}</a>
+                {% if user != following %}
+                  <form class="follow-form m-0" data-user-id="{{ following.pk }}">
+                    {% csrf_token %}
+                    {% if user in following.followers.all %}
+                      <input type="submit" value="언팔로우" class="btn main-outline-btn m-0">
+                    {% else %}
+                      <input type="submit" value="팔로우" class="btn main-btn m-0">
+                    {% endif %}
+                  </form>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 팔로워 Modal -->
+    <div class="modal fade" id="followerModal" tabindex="-1" aria-labelledby="followerModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="followerModalLabel">팔로워 목록</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {% for follower in person.followers.all %}
+              <div class="d-flex justify-content-between mb-2">
+                <a href="{% url 'accounts:profile' follower %}">{{ follower }}</a>
+                {% if user != follower %}
+                  <form class="follow-form m-0" data-user-id="{{ follower.pk }}">
+                    {% csrf_token %}
+                    {% if user in follower.followings.all %}
+                      <input type="submit" value="언팔로우" class="btn main-outline-btn m-0">
+                    {% else %}
+                      <input type="submit" value="팔로우" class="btn main-btn m-0">
+                    {% endif %}
+                  </form>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="profile-content">
       <div class="profile-gap"></div>
       <div class="review-wrap">
         <div class="review-group">
-          <h3 class="title">나의 리뷰 <span>{{ user.post_set.all|length }}</span></h3>
+          {% if person == user %}
+            <h3 class="title">나의 리뷰 <span>{{ person.post_set.all|length }}</span></h3>
+          {% else %}
+            <h3 class="title">{{ person.username }}님의 리뷰 <span>{{ person.post_set.all|length }}</span></h3>
+          {% endif %}
           <div class="wrap">
-            {% for post in user.post_set.all %}
-              <a href="{% url 'posts:post_detail' post.pk %}">
-              <h4>{{ post.title }}</h4>
-              <img src="{{ post.poster_path }}" alt="이미지 없음">
-              </a>
-            {% endfor %}
+            {% if person.post_set.all %}
+              {% for post in person.post_set.all|dictsortreversed:"created_at" %}
+              <div class="review">
+                <a href="{% url 'posts:post_detail' post.pk %}">
+                  <div class="movie-poster">
+                    <img src="{{ post.poster_path }}" alt="이미지 없음">
+                  </div>
+                  <div class="review-info">
+                    <p>{{ post.title }}</p>
+                    <span class="rating"><i class="bi bi-star-fill"></i>{{ post.score }}</span>
+                  </div>
+                </a>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="no-item">
+                <i class="bi bi-chat-right-dots"></i>
+                <p>아직 작성하신 후기가 없어요.</p>
+              </div>
+            {% endif %}
           </div>
         </div>
         <div class="review-group">
-          <h3 class="title">나의 댓글 <span>{{ user.comment_set.all|length }}</span></h3>
+          <div class="review-group">
+            {% if person == user %}
+              <h3 class="title">나의 댓글 <span>{{ person.post_set.all|length }}</span></h3>
+            {% else %}
+              <h3 class="title">{{ person.username }}님의 댓글 <span>{{ person.post_set.all|length }}</span></h3>
+            {% endif %}
+          </div>
           <div class="wrap">
-            {% for comment in user.comment_set.all %}
-              <a href="" class="comment">
-                <div>
-
+            {% if person.comment_set.all %}
+              {% for comment in person.comment_set.all|dictsortreversed:"created_at" %}
+                <div class="comment">
+                  <a href="{% url 'posts:post_detail' comment.post.pk %}" >
+                    <div class="commnet-content">
+                      <p>{{ comment.content }}</p>
+                      <div class="d-flex justify-content-between mt-2">
+                        <p class="date">{{ comment.created_at|date:"Y-m-d" }}</p>
+                        <p class="date">
+                          <i class="bi bi-hand-thumbs-up-fill"></i>
+                          {{ comment.like_users.count }}
+                        </p>
+                      </div>
+                    </div>
+                    <hr>
+                    <div class="comment-post">
+                      <div>
+                        <p>{{ comment.get_movie_title }}</p>
+                      </div>
+                      <div class="movie-poster">
+                        {% if comment.post.poster_path %}
+                          <img src="{{ comment.post.poster_path }}" alt="">
+                        {% else %}
+                          <img src="{% static 'no-photo.png' %}" alt="">
+                        {% endif %}
+                      </div>
+                    </div>
+                  </a>
                 </div>
-              </a>
-            {% endfor %}
-            <div class="comment">
-              <p>Etiam nec posuere libero. Curabitur in eros enim. Donec id nunc nisi. Suspendisse enim eros, hendrerit sit amet sem in, tempus malesuada lectus. Vivamus eu lorem velit. Nunc et diam ut mi ultrices commodo. Aenean vel bibendum purus, feugiat placerat risus. Mauris consectetur mattis ultrices. Duis at aliquam leo, sed dictum ipsum. Donec dolor erat, fermentum sit amet ultrices in, sollicitudin sit amet lacus. Sed ultricies ullamcorper velit sed euismod. Etiam ullamcorper, sapien commodo facilisis iaculis, turpis purus malesuada arcu, vitae laoreet quam ipsum ut felis. Nam hendrerit euismod nisl, ut molestie justo malesuada quis. Sed massa nisi, semper vitae ipsum a, pretium scelerisque leo.</p>
-            </div>
+              {% endfor %}
+            {% else %}
+              <div class="no-item">
+                <i class="bi bi-emoji-dizzy"></i>
+                <p>아직 작성하신 댓글이 없어요.</p>
+              </div>
+            {% endif %}
           </div>
         </div>
         <div>
-          <h3 class="title">좋아요</h3>
+          <div class="review-group">
+            {% if person == user %}
+              <h3 class="title">나의 리뷰 <span>{{ person.post_set.all|length }}</span></h3>
+            {% else %}
+              <h3 class="title">{{ person.username }}님의 리뷰 <span>{{ person.post_set.all|length }}</span></h3>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
