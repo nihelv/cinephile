@@ -221,6 +221,7 @@ def movie_detail(request, movie_id):
         'release_date': release_date[:10],
         'poster_path': poster_path,
         'reviews': reviews,
+        'genres' : genres
     }
 
     return render(request, 'posts/movie_detail.html', context)
