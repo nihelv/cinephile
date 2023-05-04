@@ -7,7 +7,7 @@ class Post(models.Model):
     movie_id = models.IntegerField()
     title = models.CharField(max_length=50)
     content = models.TextField()
-    score = models.DecimalField(max_digits=2, decimal_places=1)
+    score = models.FloatField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_posts')
