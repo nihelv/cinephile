@@ -83,18 +83,6 @@ def index(request):
         genre = sorted(genre_data['results'], key=lambda x:x['vote_average'], reverse=True)
         genre_movie_list.append(genre)
 
-    # 실시간 인기 영화 검색어
-    trending_url = 'https://api.themoviedb.org/3/trending/movie/day'
-
-    params = {
-        'api_key': TMDB_API_KEY,
-        'language': 'ko-kr',
-        'region': 'kr'
-    }
-
-    trending_response = requests.get(trending_url, params=params)
-    trending_data = trending_response.json()
-    trending = trending_data['results'][:10]
 
     # 랜덤 영화 추천
     random_url = 'https://api.themoviedb.org/3/discover/movie'
@@ -129,7 +117,6 @@ def index(request):
         'now_playing': now_playing,
         'top_rated': top_rated,
         'genre_movie_list': genre_movie_list,
-        'trending': trending,
         'random_movie': random_movie,
         'upcoming': upcoming,
         'current_date': current_date,
@@ -235,7 +222,6 @@ def movie_detail(request, movie_id):
         'release_date': release_date[:10],
         'poster_path': poster_path,
         'reviews': reviews,
-        'genres' : genres,
     }
 
     return render(request, 'posts/movie_detail.html', context)
