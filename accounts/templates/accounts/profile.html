@@ -60,7 +60,7 @@
         <div class="review-group">
           <h3 class="title">나의 리뷰 <span>{{ user.post_set.all|length }}</span></h3>
           <div class="wrap">
-            {% for review in user.post_set.all %}
+            {% for post in user.post_set.all %}
               <a href="{% url 'posts:post_detail' post.pk %}">
               <h4>{{ post.title }}</h4>
               <img src="{{ post.poster_path }}" alt="이미지 없음">
@@ -86,7 +86,6 @@
         <div>
           <h3 class="title">좋아요</h3>
         </div>
->>>>>>> master
       </div>
     </div>
   </div>

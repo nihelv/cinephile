@@ -18,7 +18,31 @@
   <form action="{% url 'posts:create' movie.id %}" method="POST">
     {% csrf_token %}
     {{ form.as_p }}
+    <div class="rating">
+      <label>평점:</label>
+      <div id="rating-stars"></div>
+      <input type="hidden" id="score-input" name="score" value="0">
+    </div>
     <input type="submit">
   </form>
-</div>
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $("#rating-stars").rateYo({
+      starWidth: "20px",
+      spacing: "5px",
+      rating: 0,
+      halfStar: true,
+      precision: 2,
+      onSet: function(rating, rateYoInstance) {
+        rating = Math.round(rating * 2) / 2;  // 0.5 단위로 조정
+        $("#score-input").val(rating.toFixed(1));  // 소수점 한 자리까지 표시
+      }
+    });
+  });
+</script>
+
 {% endblock content %}
