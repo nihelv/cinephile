@@ -12,7 +12,7 @@
             <p>No image available.</p>
             {% endif %}
             <div class='row'>
-            <p class='col-3 my-1 py-3'><strong>개봉일자:</strong></p><p class='col-9'>{{release_date }}</p>
+            <p class='col-3 my-1 py-3'><strong>개봉일자:</strong></p><p class='col-9'>{{ release_date }}</p>
             <p class='my-1 py-3'><strong>장르:</strong>
               {% for genre in genres %}
               {{ genre.name }}{% if not forloop.last %}, {% endif %}

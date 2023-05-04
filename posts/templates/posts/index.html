@@ -75,98 +75,33 @@
     
       <section class="content container">
         <div class="section-header">
-          <h2 class="title">최근에 개봉했어요!</h2>
+          <h2 class="title">상영예정작</h2>
         </div>
         <div class="movie-group">
-          <article class="movie">
-            <a class="movie-link" href="">
-              <div class="movie-poster">
-                <img src="https://an2-img.amz.wtchn.net/image/v2/WLY8BV7ynF2vdojWdKBGUg.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9ERXhOalE1TVRRMU5ETXlNRGM0TVRjaWZRLlZWR0lYR1NZQkotOWllVVFiV1RQU0JuS28tTlNQSlI4QVlDSVVFRm9wdE0" alt="">
-              </div>
-              <div class="movie-info">
-                <p class="title">슈퍼 마리오 브라더스</p>
-                <div class="movie-review">
-                  <span class="rating"><i class="bi bi-star-fill"></i>3.4</span>
-                  <span>후기 4</span>
+          {% for movie in upcoming %}
+            <article class="movie">
+              <a class="movie-link" href="{% url 'posts:movie_detail' movie.id %}">
+                <div class="movie-poster">
+                  <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
+                  <div class="d-day">
+                    <p class="d-day-number">D - {{ movie.release_date|convert_str_date|timeuntil:current_date|cut:"일" }}</p>
+                  </div>
                 </div>
-                <div class="movie-category">
-                  <span># 애니메이션</span>
-                  <span># 코미디</span>
+                <div class="movie-info">
+                  <div class="d-flex justify-content-between mb-1 px-1">
+                    <p class="title">{{ movie.title }}</p>
+                    {% comment %} <sapn class="rating"><i class="bi bi-calendar-check"></i>D - {{ movie.release_date|convert_str_date|timeuntil:current_date|cut:"일" }}</sapn> {% endcomment %}
+                  </div>
+                  <div class="movie-category">
+                    <span># {{ genre_dict|get_genre_name:movie.genre_ids.0 }}</span>
+                    {% if movie.genre_ids.1 %}
+                      <span># {{ genre_dict|get_genre_name:movie.genre_ids.1 }}</span>
+                    {% endif %}
+                  </div>
                 </div>
-              </div>
-            </a>
-          </article>
-          <article class="movie">
-            <a class="movie-link" href="">
-              <div class="movie-poster">
-                <img src="https://an2-img.amz.wtchn.net/image/v2/yonId_2R_sJbvI3AURuNHw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9ERTBNemswT1RNME1ERTJNRGMwT0RraWZRLkRwZG45a1BkWGRTSWZjbVVtRklwNjR3RUFrTUFTT1BSNzZQNFNkaS1INm8" alt="">
-              </div>
-              <div class="movie-info">
-                <p class="title">드림</p>
-                <div class="movie-review">
-                  <span class="rating"><i class="bi bi-star-fill"></i>2.9</span>
-                  <span>후기 13</span>
-                </div>
-                <div class="movie-category">
-                  <span># 드라마</span>
-                </div>
-              </div>
-            </a>
-          </article>
-          <article class="movie">
-            <a class="movie-link" href="">
-              <div class="movie-poster">
-                <img src="https://an2-img.amz.wtchn.net/image/v2/TIxhP_uofjSnN1Wc00igqA.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk56YzFOamN5TmpZek56SXdNVFUwTURRaWZRLmNnT3BLOC1QVEV4bDByQWdJY2dIWWVaOURWZlA4Sk9uVTNVTC1FYXg1T1E" alt="">
-              </div>
-              <div class="movie-info">
-                <p class="title">가디언즈 오브 갤럭시: Volume 3</p>
-                <div class="movie-review">
-                  <span class="rating"><i class="bi bi-star-fill"></i>0</span>
-                  <span>후기 0</span>
-                </div>
-                <div class="movie-category">
-                  <span># 액션</span>
-                  <span># 코미디</span>
-                </div>
-              </div>
-            </a>
-          </article>
-          <article class="movie">
-            <a class="movie-link" href="">
-              <div class="movie-poster">
-                <img src="https://an2-img.amz.wtchn.net/image/v2/Gj9piK9dLotP-7jFSgLuZw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk9EQTNPVFl6TXprNU5qYzBNamc1TURBaWZRLkV6MlpieEtfakR4b2h1SVhvcHU5eVRBOUo2dFVrMnhOM3J2eDlMSmNaZHc" alt="">
-              </div>
-              <div class="movie-info">
-                <p class="title">존 윅 4</p>
-                <div class="movie-review">
-                  <span class="rating"><i class="bi bi-star-fill"></i>3.7</span>
-                  <span>후기 27</span>
-                </div>
-                <div class="movie-category">
-                  <span># 스릴러</span>
-                  <span># 액션</span>
-                </div>
-              </div>
-            </a>
-          </article>
-          <article class="movie">
-            <a class="movie-link" href="">
-              <div class="movie-poster">
-                <img src="https://an2-img.amz.wtchn.net/image/v2/HaTjW_4v3cZnU9ukZvTSrw.jpg?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKdmNIUnpJanBiSW1SZk1qZ3dlRFF3TUhFNE1DSmRMQ0p3SWpvaUwzWXlMM04wYjNKbEwybHRZV2RsTHpFMk56RTNOalk0TlRjMU1EVTFNamMzTWpVaWZRLncyaWZ6TU1LM2hGUy1GNnhKczlDNzFlYkVuMDZMb2ZyZXdaMWI3SjZxS1k" alt="">
-              </div>
-              <div class="movie-info">
-                <p class="title">더 퍼스트 슬램덩크</p>
-                <div class="movie-review">
-                  <span class="rating"><i class="bi bi-star-fill"></i>4.1</span>
-                  <span>후기 31</span>
-                </div>
-                <div class="movie-category">
-                  <span># 애니메이션</span>
-                  <span># 스포츠</span>
-                </div>
-              </div>
-            </a>
-          </article>
+              </a>
+            </article>
+          {% endfor %}
         </div>
       </section>
     </div>
