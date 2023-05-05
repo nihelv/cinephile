@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-md-8 mx-auto">
           {% if poster_path %}
-          <img src="{{ poster_path }}" class="img-fluid mb-4">
+          <img src="{{ poster_path }}" class="img-fluid mb-4" alt={{ title }} style="width: 600px;">
           {% else %}
           <img src="{% static 'no-photo.png' %}" alt='포스터가 없습니다'>
           {% endif %}
@@ -23,15 +23,33 @@
             <p class='col-4 my-1 pt-3'><strong>줄거리</strong></p>
             <div class='col-6 my-1 text-start p-3'>{{ overview }}</div>
             </div>
-        </div>
-        <hr class='m-5' width=70%>
         
-        {% comment %} 
-        리뷰부분 스타일링
-        무비디테일에서도 수정, 삭제 접근할수있게
-        post에 대한 좋아요 수/댓글 수 표시
-        {% endcomment %}
 
+        <div>
+          <p class='col-8 my-1 mx-auto pt-3'><strong>주요 출연진</strong></p>
+          <div class='col-12 my-1 mx-auto text-center p-3'>
+            <div class='row'>
+              {% for credit in credits %}
+              <div class='col-6 m-0 p-2'>
+                <div class='row'>
+                  <div style="width:150px;                   height:130px;                  overflow:hidden;                  margin:0 auto;">
+                    <img style="object-fit:cover; width:100%; height:120%;" class='col-4' src="{{ profile_path }}{{ credit.profile_path }}" alt="{{ credit.name }}">
+                  </div>
+                  <div class='col pt-4'>
+                    <p>{{ credit.name }}</p>
+                    <p class='text-secondary'>{{ credit.character }} 役</p>                  
+                  </div>
+                </div>
+              </div>            
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        
+        
+
+        <hr class='m-5 mx-auto' width=70%>
+        
         <div>
           {% if reviews %}
             {% for review in reviews %}
