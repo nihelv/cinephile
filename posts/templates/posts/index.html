@@ -132,19 +132,18 @@
           <h2 class="title">상영예정작</h2>
         </div>
         <div class="movie-group">
-          {% for movie in upcoming %}
+          {% for movie in upcoming_movies_dict.values %}
             <article class="movie">
               <a class="movie-link" href="{% url 'posts:movie_detail' movie.id %}">
                 <div class="movie-poster">
                   <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="">
                   <div class="d-day">
-                    <p class="d-day-number">D - {{ movie.release_date|convert_str_date|timeuntil:current_date|cut:"일" }}</p>
+                    <p class="d-day-number"><small>D - {{ movie.day }}</small></p>
                   </div>
                 </div>
                 <div class="movie-info">
                   <div class="d-flex justify-content-between mb-1 px-1">
                     <p class="title">{{ movie.title }}</p>
-                    {% comment %} <sapn class="rating"><i class="bi bi-calendar-check"></i>D - {{ movie.release_date|convert_str_date|timeuntil:current_date|cut:"일" }}</sapn> {% endcomment %}
                   </div>
                   <div class="movie-category">
                     <span># {{ genre_dict|get_genre_name:movie.genre_ids.0 }}</span>
