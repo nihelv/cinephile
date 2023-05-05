@@ -1,5 +1,57 @@
 {% extends 'base.html' %}
 {% load custom_filters %}
+{% load static %}
+
+{% block style %}
+  main {
+    padding-top: 3rem;
+  }
+{% endblock style %}
+
+{% block header %}
+  <section class="header">
+    <div class="container">
+      <div class="category">
+        <ul class="tab" id="pills-tab" role="tablist">
+          <li role="presentation">
+            <button onclick="location.href='{% url 'posts:index' %}'" class="tab-button active" id="button-home-tab" data-bs-toggle="pill" data-bs-target="#button-home" type="button" role="tab" aria-controls="button-home" aria-selected="true">홈</button>
+          </li>
+          <li role="presentation">
+            <button class="tab-button" id="button-romance-tab" data-bs-toggle="pill" data-bs-target="#button-romance" type="button" role="tab" aria-controls="button-romance" aria-selected="false">로맨스</button>
+          </li>
+          <li role="presentation">
+            <button class="tab-button" id="button-action-tab" data-bs-toggle="pill" data-bs-target="#button-action" type="button" role="tab" aria-controls="button-action" aria-selected="false">액션</button>
+          </li>
+          <li role="presentation">
+            <button class="tab-button" id="button-comedy-tab" data-bs-toggle="pill" data-bs-target="#button-comedy" type="button" role="tab" aria-controls="button-comedy" aria-selected="false">코미디</button>
+          </li>
+        </ul>
+      </div>
+      <div class="keyword-ranking-wrap">
+        <div class="keyword-ranking" id="slider">
+          {% for movie in trending %}
+            <div class="keyword">
+              <p class="keyword-number"></p>
+              <p class="keyword-text">{{ movie.title }}</p>
+            </div>
+          {% endfor %}
+        </div>
+        <button class="keyword-button"><i class="bi bi-chevron-down"></i></button>
+        <div class="keyword-ranking" id="ranking-list">
+          <p class="fw-bold px-3 py-2">인기 검색어</p>
+          {% for movie in trending %}
+            <a href="{% url 'posts:movie_detail' movie.id %}">
+              <div class="keyword">
+                <p class="keyword-number"></p>
+                <p class="keyword-text">{{ movie.title }}</p>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock header %}
 
 {% block content %}
   <div class="tab-content" id="pills-tabContent">
@@ -38,8 +90,7 @@
     
       <section class="banner container">
         <div>
-          <h5 class="banner-text mb-2">🔍</h5>
-          <p>새로운 영화를 발견해보세요!</p>
+          <h5 class="banner-text">🔍 새로운 영화를 발견해보세요!</h5>
         </div>
         <a href="{% url 'posts:movie_detail' random_movie.id %}" class="banner-button">랜덤 영화 보기</a>
       </section>
@@ -225,3 +276,100 @@
   </div>
   
 {% endblock content %}
+
+{% block script %}
+  <script>
+    // 검색어
+    function Slider(target) {
+      let index = 1;
+      let isMoved = true;
+      const speed = 1500; // ms
+
+      const transform = "transform " + speed / 1000 + "s";
+      let translate = (i) => "translateY(-" + 100 * i + "%)";
+
+      const slider = document.querySelector(target);
+      const sliderRects = slider.getClientRects()[0];
+      slider.style["overflow"] = "hidden";
+
+      const container = document.createElement("div");
+      container.style["display"] = "flex";
+      container.style["flex-direction"] = "column";
+      container.style["width"] = sliderRects.width + "px";
+      container.style["height"] = 24 + "px";
+      container.style["transform"] = translate(index);
+
+      let boxes = [].slice.call(slider.children);
+      boxes = [].concat(boxes[boxes.length - 1], boxes, boxes[0]);
+
+      const size = boxes.length;
+      for (let i = 0; i < size; i++) {
+        const box = boxes[i];
+        if (i === 11) {
+          box.children[0].textContent = 1
+        } else {
+          box.children[0].textContent = i
+        }
+        box.style["height"] = "100%";
+        box.style["width"] = "100%";
+        container.appendChild(box.cloneNode(true));
+      }
+
+      container.addEventListener("transitionstart", function () {
+        isMoved = false;
+        setTimeout(() => {
+          isMoved = true;
+        }, speed);
+      });
+      container.addEventListener("transitionend", function () {
+        if (index === size - 1) {
+          index = 1;
+          container.style["transition"] = "none";
+          container.style["transform"] = translate(index);
+        }
+        if (index === 0) {
+          index = size - 1;
+          container.style["transition"] = "none";
+          container.style["transform"] = translate(index);
+        }
+      });
+
+      slider.innerHTML = "";
+      slider.appendChild(container);
+
+      return {
+        move: function (i) {
+          if (isMoved === true) {
+            index = i;
+            container.style["transition"] = transform;
+            container.style["transform"] = translate(index);
+          }
+        },
+        next: function () {
+          if (isMoved === true) {
+            index = (index + 1) % size;
+            container.style["transition"] = transform;
+            container.style["transform"] = translate(index);
+          }
+        },
+        prev: function () {
+          if (isMoved === true) {
+            index = index === 0 ? index + size : index;
+            index = (index - 1) % size;
+            container.style["transition"] = transform;
+            container.style["transform"] = translate(index);
+          }
+        }
+      };
+    }
+
+    const s1 = new Slider("#slider");
+
+    setInterval(() => {
+      s1.next();
+    }, 1500)
+
+  </script>
+  <script src="{% static 'accounts.js' %}"></script>
+  <script src="{% static 'header.js' %}"></script>
+{% endblock script %}
