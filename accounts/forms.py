@@ -55,6 +55,7 @@ class CustomAuthenticationForm(AuthenticationForm):
 
 # 사용자 정의 회원 정보 변경 Form
 class CustomUserChangeForm(UserChangeForm):
+    password = None
     email = forms.EmailField(
         label='이메일',
         widget=forms.TextInput(
