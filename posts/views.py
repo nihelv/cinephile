@@ -193,35 +193,43 @@ def search(request):
 
     if 'results' in person_search_data and person_search_data['results']:
         for person in person_search_data['results']:
-            person_id = person['id']
-            credit_url = f"https://api.themoviedb.org/3/person/{person_id}/movie_credits"
-            credit_params = {
-                'api_key': TMDB_API_KEY,
-                'language': 'ko-kr',
-            }
-            credit_response = requests.get(credit_url, params=credit_params)
-            credit_data = credit_response.json()
+            if person.get('profile_path'):
+                person_id = person['id']
+                credit_url = f"https://api.themoviedb.org/3/person/{person_id}/movie_credits"
+                credit_params = {
+                    'api_key': TMDB_API_KEY,
+                    'language': 'ko-kr',
+                }
+                credit_response = requests.get(credit_url, params=credit_params)
+                credit_data = credit_response.json()
 
-            if 'cast' in credit_data:
-                sorted_actor_movies = sorted(credit_data['cast'], key=lambda x: x['release_date'], reverse=True)
+                if 'cast' in credit_data:
+                    sorted_actor_movies = sorted(credit_data['cast'], key=lambda x: x['release_date'], reverse=True)
 
-                movies = []
-                for actor_movie in sorted_actor_movies:
-                    if len(movies) >= 4:
-                        break
+                    movies = []
+                    for actor_movie in sorted_actor_movies:
+                        if len(movies) >= 4:
+                            break
 
-                    if actor_movie.get('poster_path'):
-                        actor_movie_image_url = 'https://image.tmdb.org/t/p/w200'
-                        actor_movie['poster_path'] = actor_movie_image_url + actor_movie['poster_path']
-                        movie_posters.append(actor_movie)
-                        movies.append(actor_movie['title'])
+                        if actor_movie.get('poster_path'):
+                            actor_movie_image_url = 'https://image.tmdb.org/t/p/w200'
+                            actor_movie['poster_path'] = actor_movie_image_url + actor_movie['poster_path']
+                            movie_posters.append(actor_movie)
+                            movies.append(actor_movie['title'])
 
-                if movies:
-                    movies_cast.append({
-                        'person_name': person['name'],
-                        'movies': movies,
-                    })
+                    if movies:
+                        person_name = person['name']
+                        is_check = False
+                        for cast in movies_cast:
+                            if cast['person_name'] == person_name:
+                                is_check = True
+                                break
 
+                        if not is_check:
+                            movies_cast.append({
+                                'person_name': person_name,
+                                'movies': movies,
+                            })
 
     # 최신순 정렬
     sorted_movies = sorted(movie_search_data['results'], key=lambda x: x['release_date'], reverse=True)
