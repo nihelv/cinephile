@@ -27,8 +27,7 @@
           <div class="user-btn">
             {% if user == person %}
               <a href="{% url 'accounts:update' %}" class="update-btn">설정</a>
-            {% endif %}
-            {% if user != person %}
+            {% else %}
               <div class="follow-btn">
                 <form class="follow-form" data-user-id="{{ person.pk }}">
                   {% csrf_token %}
@@ -64,7 +63,7 @@
           </div>
           <div class="modal-body">
             {% for following in person.followings.all %}
-              <div class="d-flex justify-content-between">
+              {% comment %} <div class="d-flex justify-content-between">
                 <a href="{% url 'accounts:profile' following %}">{{ following }}</a>
                 {% if user != following %}
                   <form class="follow-form m-0" data-user-id="{{ following.pk }}">
@@ -76,6 +75,14 @@
                     {% endif %}
                   </form>
                 {% endif %}
+              </div> {% endcomment %}
+              <div class="d-flex justify-content-between mb-2">
+                <a href="{% url 'accounts:profile' following %}" class="d-flex">
+                  <div class="user-image">
+                    <img src="https://image.ohou.se/i/bucketplace-v2-development/uploads/users/profile_images/1682908711_kakao_2770419516.jpg?gif=1&w=144&h=144&c=c&webp=1" alt="">
+                  </div>
+                  {{ following }}
+                </a>
               </div>
             {% endfor %}
           </div>
@@ -93,7 +100,7 @@
           </div>
           <div class="modal-body">
             {% for follower in person.followers.all %}
-              <div class="d-flex justify-content-between mb-2">
+              {% comment %} <div class="d-flex justify-content-between mb-2">
                 <a href="{% url 'accounts:profile' follower %}">{{ follower }}</a>
                 {% if user != follower %}
                   <form class="follow-form m-0" data-user-id="{{ follower.pk }}">
@@ -105,6 +112,14 @@
                     {% endif %}
                   </form>
                 {% endif %}
+              </div> {% endcomment %}
+              <div class="d-flex justify-content-between mb-2">
+                <a href="{% url 'accounts:profile' follower %}" class="d-flex">
+                  <div class="user-image">
+                    <img src="https://image.ohou.se/i/bucketplace-v2-development/uploads/users/profile_images/1682908711_kakao_2770419516.jpg?gif=1&w=144&h=144&c=c&webp=1" alt="">
+                  </div>
+                  {{ follower }}
+                </a>
               </div>
             {% endfor %}
           </div>
@@ -147,9 +162,9 @@
         <div class="review-group">
           <div class="review-group">
             {% if person == user %}
-              <h3 class="title">나의 댓글 <span>{{ person.post_set.all|length }}</span></h3>
+              <h3 class="title">나의 댓글 <span>{{ person.comment_set.all|length }}</span></h3>
             {% else %}
-              <h3 class="title">{{ person.username }}님의 댓글 <span>{{ person.post_set.all|length }}</span></h3>
+              <h3 class="title">{{ person.username }}님의 댓글 <span>{{ person.comment_set.all|length }}</span></h3>
             {% endif %}
           </div>
           <div class="wrap">
@@ -191,7 +206,7 @@
             {% endif %}
           </div>
         </div>
-        <div>
+        {% comment %} <div>
           <div class="review-group">
             {% if person == user %}
               <h3 class="title">나의 리뷰 <span>{{ person.post_set.all|length }}</span></h3>
@@ -199,8 +214,14 @@
               <h3 class="title">{{ person.username }}님의 리뷰 <span>{{ person.post_set.all|length }}</span></h3>
             {% endif %}
           </div>
-        </div>
+        </div> {% endcomment %}
       </div>
     </div>
   </div>
 {% endblock content %}
+
+{% if person != user %}
+  {% block script %}
+  <script src="{% static 'follow.js' %}"></script>
+  {% endblock script %}
+{% endif %}

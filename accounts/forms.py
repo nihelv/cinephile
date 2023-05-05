@@ -38,7 +38,7 @@ class CustomAuthenticationForm(AuthenticationForm):
         label='',
         widget=forms.TextInput(
             attrs={
-                'class': 'form-control',
+                'class': 'form-control form-field',
                 'placeholder': '아이디',
             })
     )
@@ -47,7 +47,7 @@ class CustomAuthenticationForm(AuthenticationForm):
         label='',
         widget=forms.PasswordInput(
             attrs={
-                'class': 'form-control',
+                'class': 'form-control form-field',
                 'placeholder': '비밀번호',
             })
     )

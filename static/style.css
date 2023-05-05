@@ -26,7 +26,7 @@ li {
 }
 
 main {
-  padding-top: 3rem;
+  padding-bottom: 3rem;
 }
 
 .container {
@@ -59,7 +59,7 @@ main {
   color: #888888;
 }
 
-.search-form .form-control:focus {
+.form-control:focus {
   border-color: #35C5F0; 
   box-shadow: none;
 }
@@ -246,6 +246,8 @@ footer .container {
   font-size: 1.5rem;
 }
 
+/* login, signup modal */
+
 .modal-dialog {
   width: 400px;
   text-align: center;
@@ -294,6 +296,11 @@ footer .container {
   padding: 0.75rem;
 }
 
+#loginModal .form-control:focus, #signupModal .form-control:focus {
+  background-color: rgb(245, 245, 245);
+  border: 1px solid #35C5F0;
+}
+
 .form-field::placeholder {
   color: rgb(175, 175, 175);
 }
@@ -320,10 +327,12 @@ footer .container {
   width: 280px;
   position: relative;
   padding: 1rem;
+  font-size: 0.9375rem;
 }
 
 #error-modal .close-area {
   cursor: pointer;
+  color: #009FCE;
 }
 
 /* index.html */
@@ -332,7 +341,7 @@ img {
 }
 
 .tab-content {
-  padding-bottom: 5rem;
+  padding-bottom: 3rem;
 }
 
 .content {
@@ -494,6 +503,12 @@ img {
 
 .search .movie-group {
   margin-top: 1rem;
+  gap: 2.65rem;
+}
+
+.search .movie {
+  width: calc(25% - 2rem);
+  padding-bottom: 3rem;
 }
 
 .result-count {
@@ -501,7 +516,7 @@ img {
 }
 
 .search .movie-poster {
-  height: 390px;
+  height: 400px;
 }
 
 .no-poster {
@@ -564,15 +579,16 @@ img {
 
 .profile-wrap {
   position: fixed;
+  top: 112px;
   width: 280px;
   padding: 2rem;
   border: 1px solid rgb(218, 220, 224);
   border-radius: 0.25rem;
-  transition: top 0.3s ease-in-out;
+  transition: top 0.2s ease-in-out;
 }
 
 .profile-up {
-  top: 100px;
+  top: 95px;
 }
 
 .user {
@@ -659,6 +675,11 @@ img {
   padding: 0.5rem;
 }
 
+#followingModal .modal-body, #followerModal .modal-body {
+  padding-bottom: 0;
+  overflow-y: scroll;
+}
+
 #followingModal .modal-body .main-btn, #followerModal .modal-body .main-btn {
   font-size: 0.875rem;
   padding: 0.25rem 0.75rem;
@@ -670,11 +691,18 @@ img {
 
 #followingModal .modal-content, #followerModal .modal-content {
   padding: 0;
+  max-height: 350px;
 }
 
 #followingModal .modal-header, #followerModal .modal-header {
   padding:1rem;
   border-bottom: 1px solid #dee2e6;
+}
+
+a .user-image {
+  width: 30px;
+  height: auto;
+  margin-right: 0.75rem;
 }
 
 .user-mark-group {
@@ -750,7 +778,7 @@ img {
 }
 
 .review-group .wrap::-webkit-scrollbar {
-  height: 5px;
+  height: 3px;
   background-color: transparent;
 }
 

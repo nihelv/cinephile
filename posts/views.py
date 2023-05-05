@@ -177,7 +177,7 @@ def search(request):
 
     # 페이지네이션
     page = request.GET.get('page', '1')
-    per_page = 20
+    per_page = 12
     paginator = Paginator(sorted_movie, per_page)
     posts = paginator.get_page(page)
 
