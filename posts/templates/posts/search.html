@@ -38,6 +38,7 @@
 
       {% comment %} 검색한 배우의 출연 영화 목록 {% endcomment %}
       {% elif person_search_data.results %}
+      <p class="result-count">검색결과 <b>{{ movies_cast|length }}건</b></p>
         <div class="person-group">
           {% for person in person_search_data.results %}
             {% if person.profile_path %}
