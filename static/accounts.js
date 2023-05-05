@@ -32,6 +32,9 @@ loginForm.addEventListener('submit', function (event) {
 })
 
 const signupForm = document.getElementById('signup-form')
+const email = document.getElementsByName('email')
+const firstName = document.getElementsByName('first_name')
+const lastName = document.getElementsByName('last_name')
 const password1 = document.getElementsByName('password1')
 const password2 = document.getElementsByName('password2')
 
@@ -39,6 +42,9 @@ signupForm.addEventListener('submit', function (event) {
   event.preventDefault()
   const formData = new FormData()
   formData.append('username', username[1].value)
+  formData.append('email', email[0].value)
+  formData.append('first_name', firstName[0].value)
+  formData.append('last_name', lastName[0].value)
   formData.append('password1', password1[0].value)
   formData.append('password2', password2[0].value)
   formData.append('csrfmiddlewaretoken', csrftoken)
