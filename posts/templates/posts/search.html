@@ -1,14 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block title %}
-  검색결과 | {{ movie_title }}
+  검색결과 | {{ query }}
 {% endblock title %}
 
 {% block content %}
-{% comment %} 검색 결과에 페이지네이션을 추가하는 건 어떨까요? {% endcomment %}
-{% comment %} 검색 input에 사용자가 입력한 검색어를 남길 수 있는 방법이 있을까요? {% endcomment %}
-{% comment %} 검색 결과를 최신순으로 정렬해서 보여주는 것도 좋을 것 같아요! {% endcomment %}
   <section class="search container">
     {% if movie_search_data.results %}
       <p class="result-count">검색결과 <b>{{ movie_search_data.results|length }}건</b></p>
@@ -26,10 +24,16 @@
               </div>
             {% endif %}
             <div class="movie-info">
-              <h3 class="movie-title">{{ movie.title }}</h3>
-              <div class="d-flex">
-                <p>{{ movie.release_date }} 개봉</p>
+              <div class="d-flex justify-content-between">
+                <h3 class="title">{{ movie.title }}</h3>
+                {% comment %} <p>{{ movie.release_date }} 개봉</p> {% endcomment %}
                 <span class="search rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average|floatformat }}</span>
+              </div>
+              <div class="movie-category">
+                <span># {{ movie.genre_ids.0 }}</span>
+                {% comment %} {% if movie.genre_ids.1 %}
+                  <span># {{ genre_dict|get_genre_name:movie.genre_ids.1 }}</span>
+                {% endif %} {% endcomment %}
               </div>
             </div>
           </a>
@@ -38,31 +42,40 @@
 
       {% comment %} 검색한 배우의 출연 영화 목록 {% endcomment %}
       {% elif person_search_data.results %}
-      <p class="result-count">검색결과 <b>{{ movies_cast|length }}건</b></p>
+        <p class="result-count">검색결과 <b>{{ movies_cast|length }}건</b></p>
         <div class="person-group">
           {% for person in person_search_data.results %}
             {% if person.profile_path %}
-              <article class="movie">
+              <article class="person">
                 <div class="person-profile">
-                  <img src="{{ person.profile_path }}" alt="{{ person.name }} 프로필 사진">
+                  <div class="movie-poster">
+                    <img src="{{ person.profile_path }}" alt="{{ person.name }} 프로필 사진">
+                  </div>
                 </div>
                 <div class="movie-info">
-                  <h3 class="person-name">{{ person.name }}</h3>
-                  <h4>출연 작품</h4>
-                  <ul>
-                    {% for movie_cast in movies_cast %}
-                      {% if movie_cast.person_name == person.name %}
-                        {% for movie_title in movie_cast.movies %}
-                          {% for poster in movie_posters %}
-                            {% if movie_title == poster.title and poster.poster_path %}
-                              <li>{{ movie_title }}</li>
-                              <img src="{{ poster.poster_path }}" alt="{{ movie_title }} 포스터">
-                            {% endif %}
+                  <h3 class="person-name fw-bold">{{ person.name }}</h3>
+                  <div>
+                    <p class="mb-2">출연 작품</p>
+                    <div class="person-movie-list">
+                      {% for movie_cast in movies_cast %}
+                        {% if movie_cast.person_name == person.name %}
+                          {% for movie_title in movie_cast.movies %}
+                            {% for poster in movie_posters %}
+                              {% if movie_title == poster.title and poster.poster_path %}
+                                <div class="person-movie">
+                                  <a href="{% url 'posts:movie_detail' poster.id %}">
+                                    <div class="movie-poster">
+                                      <img src="{{ poster.poster_path }}" alt="{{ movie_title }} 포스터">
+                                    </div>
+                                  </a>
+                                </div>
+                              {% endif %}
+                            {% endfor %}
                           {% endfor %}
-                        {% endfor %}
-                      {% endif %}
-                    {% endfor %}
-                  </ul>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
                 </div>
               </article>
             {% endif %}
@@ -72,48 +85,51 @@
         <h2>'{{ query }}' 검색 결과가 없습니다.</h2>
       {% endif %}
     </div>
+
     {% comment %} 페이지네이션 {% endcomment %}
-    <ul class="pagination justify-content-center">
-      {% if posts.has_previous %}
-        <li class="page-item">
-          <a class="page-link" href="?title={{ query }}&page=1">처음으로</a>
-        </li>
-        <li class="page-item">
-          <a class="page-link" href="?title={{ query }}&page={{ posts.previous_page_number }}">이전</a>
-        </li>
-      {% else %}
-        <li class="page-item disabled">
-          <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
-        </li>
-      {% endif %}
-    
-      {% for page_number in posts.paginator.page_range %}
-      {% if page_number >= posts.number|add:-4 and page_number <= posts.number|add:4 %}
-        {% if page_number == posts.number %}
-          <li class="page-item active" aria-current="page">
-            <a class="page-link" href="?title={{ query }}&page={{ page_number }}">{{ page_number }}</a>
+    {% if movie_search_data.results %}
+      <ul class="pagination justify-content-center">
+        {% if movies.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?title={{ query }}&page=1">처음으로</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?title={{ query }}&page={{ movies.previous_page_number }}">이전</a>
           </li>
         {% else %}
-          <li class="page-item">
-            <a class="page-link" href="?title={{ query }}&page={{ page_number }}">{{ page_number }}</a>
+          <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
           </li>
         {% endif %}
-      {% endif %}
-    {% endfor %}
-    
-      {% if posts.has_next %}
-        <li class="page-item">
-          <a class="page-link" href="?title={{ query }}&page={{ posts.next_page_number }}">다음</a>
-        </li>
-        <li class="page-item">
-          <a class="page-link" href="?title={{ query }}&page={{ posts.paginator.num_pages }}">마지막으로</a>
-        </li>
-      {% else %}
-        <li class="page-item disabled">
-          <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
-        </li>
-      {% endif %}
-    </ul>
+      
+        {% for page_number in movies.paginator.page_range %}
+          {% if page_number >= movies.number|add:-4 and page_number <= movies.number|add:4 %}
+            {% if page_number == movies.number %}
+              <li class="page-item active" aria-current="page">
+                <a class="page-link" href="?title={{ query }}&page={{ page_number }}">{{ page_number }}</a>
+              </li>
+            {% else %}
+              <li class="page-item">
+                <a class="page-link" href="?title={{ query }}&page={{ page_number }}">{{ page_number }}</a>
+              </li>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      
+        {% if movies.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?title={{ query }}&page={{ movies.next_page_number }}">다음</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?title={{ query }}&page={{ movies.paginator.num_pages }}">마지막으로</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+          </li>
+        {% endif %}
+      </ul>
+    {% endif %}
   </section>
 
 {% endblock content %}

@@ -160,13 +160,11 @@
           </div>
         </div>
         <div class="review-group">
-          <div class="review-group">
-            {% if person == user %}
-              <h3 class="title">나의 댓글 <span>{{ person.comment_set.all|length }}</span></h3>
-            {% else %}
-              <h3 class="title">{{ person.username }}님의 댓글 <span>{{ person.comment_set.all|length }}</span></h3>
-            {% endif %}
-          </div>
+          {% if person == user %}
+            <h3 class="title">나의 댓글 <span>{{ person.comment_set.all|length }}</span></h3>
+          {% else %}
+            <h3 class="title">{{ person.username }}님의 댓글 <span>{{ person.comment_set.all|length }}</span></h3>
+          {% endif %}
           <div class="wrap">
             {% if person.comment_set.all %}
               {% for comment in person.comment_set.all|dictsortreversed:"created_at" %}
