@@ -26,7 +26,7 @@
     <div class="container">
       <a href="{% url 'posts:index' %}" class="navbar-brand">Cinephile</a>
       <form class="d-flex search-form" role="search" method="GET" action="{% url 'posts:search' %}">
-        <input class="form-control me-2" type="search" name="title" placeholder="영화 제목을 검색해보세요." aria-label="Search" value="{{ movie_title }}">
+        <input class="form-control me-2" type="search" name="query" placeholder="제목, 장르, 인물을 검색해보세요." aria-label="Search" value="{{ query }}">
       </form>
 
       {% comment %} 사용자 검색 기록
