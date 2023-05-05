@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block title %}
   검색결과 | {{ movie_title }}
@@ -28,7 +29,12 @@
             <div class="movie-info">
               <h3 class="movie-title">{{ movie.title }}</h3>
               <div class="d-flex">
-                <p>{{ movie.release_date }} 개봉</p>
+                <div class="movie-category">
+                  <span># {{ genre_dict|get_genre_name:movie.genre_ids.0 }}</span>
+                  {% if movie.genre_ids.1 %}
+                    <span># {{ genre_dict|get_genre_name:movie.genre_ids.1 }}</span>
+                  {% endif %}
+                </div>
                 <span class="search rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average|floatformat }}</span>
               </div>
             </div>
