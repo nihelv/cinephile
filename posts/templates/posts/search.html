@@ -24,16 +24,15 @@
               </div>
             {% endif %}
             <div class="movie-info">
-              <div class="d-flex justify-content-between">
-                <h3 class="title">{{ movie.title }}</h3>
-                {% comment %} <p>{{ movie.release_date }} 개봉</p> {% endcomment %}
+              <h3 class="movie-title">{{ movie.title }}</h3>
+              <div class="d-flex">
+                <div class="movie-category">
+                  <span># {{ genre_dict|get_genre_name:movie.genre_ids.0 }}</span>
+                  {% if movie.genre_ids.1 %}
+                    <span># {{ genre_dict|get_genre_name:movie.genre_ids.1 }}</span>
+                  {% endif %}
+                </div>
                 <span class="search rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average|floatformat }}</span>
-              </div>
-              <div class="movie-category">
-                <span># {{ movie.genre_ids.0 }}</span>
-                {% comment %} {% if movie.genre_ids.1 %}
-                  <span># {{ genre_dict|get_genre_name:movie.genre_ids.1 }}</span>
-                {% endif %} {% endcomment %}
               </div>
             </div>
           </a>

@@ -1,4 +1,5 @@
 import requests
+from .models import genre_dict
 
 # 실시간 인기 영화 검색어
 def trending_movies(request):
@@ -17,3 +18,6 @@ def trending_movies(request):
     trending = trending_data['results'][:10]
 
     return {'trending': trending,}
+
+def genre_dict(request):
+    return {'genre_dict': genre_dict}

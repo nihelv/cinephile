@@ -240,11 +240,29 @@ def search(request):
     paginator = Paginator(sorted_movies, per_page)
     movies = paginator.get_page(movie_page)
 
-    # 검색 기록 가져오기
-    # search_history = Search_history.objects.filter(user=request.user).order_by('-history')[:5]
+    # 장르
+    genre_dict = {
+        28: '액션',
+        12: '모험',
+        16: '애니메이션',
+        35: '코미디',
+        80: '범죄',
+        99: '다큐멘터리',
+        18: '드라마',
+        10751: '가족',
+        14: '판타지',
+        36: '역사',
+        27: '공포',
+        10402: '음악',
+        9648: '미스터리',
+        10749: '로맨스',
+        878: 'SF',
+        10770: 'TV 영화',
+        53: '스릴러',
+        10752: '전쟁',
+        37: '서부'
+    }
 
-    # if movie_title and not Search_history.objects.filter(search=movie_title, user=request.user).exists():
-    #     Search_history.objects.create(search=movie_title, user=request.user)
     context = {
         'movie_search_data': movie_search_data,
         'person_search_data': person_search_data,
@@ -252,19 +270,10 @@ def search(request):
         'query': query,
         'movies_cast': movies_cast,
         'movie_posters': movie_posters,
+        'genre_dict': genre_dict,
     }
 
     return render(request, 'posts/search.html', context)
-
-
-# # 현재 사용자의 모든 검색 기록을 삭제
-# def search_delete(request):
-#     if request.method == 'POST':
-#         search_id = request.POST.get('search_id')
-#         Search_history.objects.filter(id=search_id, user=request.user).delete()
-#     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-#     # return redirect('posts:search')
-
 
 
 # 영화 상세정보와 그 영화에 쓰인 후기글을 보여줌
