@@ -425,7 +425,7 @@ img {
 }
 
 .d-day {
-  width: 2.5rem;
+  width: 2.75rem;
   height: 1.5rem;
   text-align: center;
   position: absolute;
@@ -438,6 +438,7 @@ img {
 .d-day-number {
   color: crimson;
   font-weight: bold;
+  line-height: 1.35;
 }
 
 .movie-review {
@@ -497,6 +498,7 @@ img {
 }
 
 /* search.html */
+/* 영화 이름 검색 */
 .search.container {
   margin: 1.5rem auto 5rem;
 }
@@ -535,13 +537,9 @@ img {
   opacity: 0.5;
 }
 
-.movie-title {
+.search .title {
   margin-top: 0.5rem;
-  font-size: 1.25rem;
-  font-weight: bold;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 1.125rem;
 }
 
 .movie-info {
@@ -549,7 +547,7 @@ img {
   flex-direction: column;
 }
 
-.movie-info .search:before {
+/* .movie-info .search:before {
   content: "";
   position: absolute;
   top: 25%;
@@ -558,17 +556,69 @@ img {
   width: 1px;
   height: 12px;
   background-color: #e0e0e0;
-}
-
-.search.rating {
-  padding-left: 1.5rem;
-}
+} */
 
 .rating {
   position: relative;
   display: flex;
   align-items: center;
   gap: 0.125rem;
+}
+
+/* 인물 검색 */
+.person-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.person {
+  display: flex;
+  margin: 1.5rem 0 3rem;
+  gap: 2rem;
+}
+
+.person-profile {
+  flex-shrink: 0;
+}
+
+.person-profile .movie-poster {
+  height: 350px;
+  margin: 0;
+}
+
+.person .movie-info {
+  justify-content: space-between;
+  overflow-x: scroll;
+}
+
+.person .movie-info::-webkit-scrollbar {
+  height: 3px;
+  background-color: transparent;
+}
+
+.person .movie-info::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.person-movie-list {
+  display: flex;
+  width: 100%;
+  gap: 1rem;
+}
+
+.person-movie {
+  flex-shrink: 0;
+}
+
+.person-movie .movie-poster {
+  height: 225px;
+}
+
+.person-movie p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* profile.html */
