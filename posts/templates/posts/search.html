@@ -11,7 +11,7 @@
     {% if movie_search_data.results %}
       <p class="result-count">검색결과 <b>{{ movie_search_data.results|length }}건</b></p>
       <div class="movie-group">
-      {% for movie in movies %}
+      {% for movie in posts %}
         <article class="movie">
           <a href="{% url 'posts:movie_detail' movie_id=movie.id %}">
             {% if movie.poster_path %}
@@ -86,49 +86,47 @@
     </div>
 
     {% comment %} 페이지네이션 {% endcomment %}
-    {% if movie_search_data.results %}
-      <ul class="pagination justify-content-center">
-        {% if movies.has_previous %}
-          <li class="page-item">
-            <a class="page-link" href="?title={{ query }}&page=1">처음으로</a>
-          </li>
-          <li class="page-item">
-            <a class="page-link" href="?title={{ query }}&page={{ movies.previous_page_number }}">이전</a>
-          </li>
-        {% else %}
-          <li class="page-item disabled">
-            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
-          </li>
-        {% endif %}
-      
-        {% for page_number in movies.paginator.page_range %}
-          {% if page_number >= movies.number|add:-4 and page_number <= movies.number|add:4 %}
-            {% if page_number == movies.number %}
-              <li class="page-item active" aria-current="page">
-                <a class="page-link" href="?title={{ query }}&page={{ page_number }}">{{ page_number }}</a>
-              </li>
-            {% else %}
-              <li class="page-item">
-                <a class="page-link" href="?title={{ query }}&page={{ page_number }}">{{ page_number }}</a>
-              </li>
-            {% endif %}
+    <ul class="pagination justify-content-center">
+      {% if posts.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?query={{ query }}&page=1">처음으로</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?query={{ query }}&page={{ posts.previous_page_number }}">이전</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+        </li>
+      {% endif %}
+
+      {% for page_number in posts.paginator.page_range %}
+        {% if page_number >= posts.number|add:-4 and page_number <= posts.number|add:4 %}
+          {% if page_number == posts.number %}
+            <li class="page-item active" aria-current="page">
+              <a class="page-link" href="?query={{ query }}&page={{ page_number }}">{{ page_number }}</a>
+            </li>
+          {% else %}
+            <li class="page-item">
+              <a class="page-link" href="?query={{ query }}&page={{ page_number }}">{{ page_number }}</a>
+            </li>
           {% endif %}
-        {% endfor %}
-      
-        {% if movies.has_next %}
-          <li class="page-item">
-            <a class="page-link" href="?title={{ query }}&page={{ movies.next_page_number }}">다음</a>
-          </li>
-          <li class="page-item">
-            <a class="page-link" href="?title={{ query }}&page={{ movies.paginator.num_pages }}">마지막으로</a>
-          </li>
-        {% else %}
-          <li class="page-item disabled">
-            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
-          </li>
         {% endif %}
-      </ul>
-    {% endif %}
-  </section>
+      {% endfor %}
+
+      {% if posts.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?query={{ query }}&page={{ posts.next_page_number }}">다음</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?query={{ query }}&page={{ posts.paginator.num_pages }}">마지막으로</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+        </li>
+      {% endif %}
+    </ul>
+    </section>
 
 {% endblock content %}

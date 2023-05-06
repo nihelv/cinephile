@@ -1,5 +1,4 @@
 from django import template
-from posts.models import genre_dict
 
 register = template.Library()
 
