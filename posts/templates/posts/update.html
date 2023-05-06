@@ -11,15 +11,15 @@
           <div class="card-body h-100">
             <ul class="list-group list-group-flush d-flex flex-column h-100">
               <li class="list-group-item"><h3><strong>{{ post.movie_title }}</strong></h3></li>
-              {% comment %} <li class="list-group-item flex-grow-1">{{ movie.overview|truncatechars:200 }}</li>
-              <li class="list-group-item">개봉일: {{ movie.release_date }}</li> {% endcomment %}
+              <li class="list-group-item flex-grow-1">{{ post.movie_overview|truncatechars:200 }}</li>
+              <li class="list-group-item">개봉일: {{ post.movie_release_date }}</li>
             </ul>
           </div>
         </div>
       </div>
     </div>
     <ul class="list-group list-group-flush">
-      <form action="{% url 'posts:create' post.movie_id %}" method="POST">
+      <form action="{% url 'posts:update' post.pk %}" method="POST">
         {% csrf_token %}
         <li class="list-group-item border-0 px-0">
           <div class="rating">
