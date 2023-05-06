@@ -384,7 +384,10 @@ def update(request, post_pk):
         if request.method == 'POST':
             form = PostForm(request.POST, instance=post)
             if form.is_valid():
-                form.save()
+                post = form.save(commit=False)
+                score = float(request.POST['score'])
+                post.score = score
+                post.save()
                 return redirect('posts:post_detail', post.pk)
         else:
             form = PostForm(instance=post)
