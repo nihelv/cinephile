@@ -1,102 +1,142 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <div class="container">
-    <div class="row">
-      <div class="col-8 mx-auto">
-        <p>{{ post.title }}</p>
-        <a href="{% url 'accounts:profile' post.user %}">{{ post.user.username }}</a>
-        <p>{{ post.content }}</p>
+{% comment %} 포스트 본문 {% endcomment %}
+<div class="container" style="min-height: 585px;">
+  <div class="row">
+    <div class="col-8 mx-auto">
+      <div class="d-flex align-items-end justify-content-between">
+        <h3 class='ps-3 m-0'>{{ post.title }}</h3>
+        <p class="date pe-3">{{ post.created_at|date:"Y-m-d" }}</p>
       </div>
-    </div>
+      <hr>
+      <div class='d-flex justify-content-end align-items-center pe-3'>
+        <button type="button" class="btn btn-light mx-2">
+          <a class="small" href="{% url 'accounts:profile' post.user %}"><b>{{ post.user.username }}</b></a>
+        </button>
+        {% if user == post.user %}
+        <div>
+          <a href="{% url 'posts:update' post.pk %}">
+            <i class="bi bi-pencil-square"></i>      
+          </a>
+          <a class='ms-1 px-1' href="{% url 'posts:delete' post.pk %}">
+            <i class="bi bi-trash"></i>
+          </a>
+        </div>
+        {% endif %}
+      </div>
+      <p class='mt-3 mb-4 ps-3'>{{ post.content }}</p>
 
-    <hr class="mx-auto" width="70%">
+      {% comment %} 포스트 좋아요 {% endcomment %}
 
-    <div class="row">
-      <div class="col-8 mx-auto">
+      <div class="d-flex justify-content-center">
+        <div class="row mb-3">
         {% if user.is_authenticated %}
-          <div class="post-likes">
+          <div class="post-likes col-12">
             <form action=" {% url 'posts:post_likes' post.pk %} ">
-            {% csrf_token %}
-            <button class="like-button {% if request.user in post.like_users.all %}active{% endif %} btn btn-link">
+              {% csrf_token %}
               {% if request.user in post.like_users.all %}
-              <i class="bi bi-hand-thumbs-up"></i> Unlike
-              {% else %}
-              <i class="bi bi-hand-thumbs-up"></i> Like
-              {% endif %}
-            </button>
-            <span class="like-count">{{ post.like_users.count }}</span>
+                <button class="like-button fw-bold btn main-btn">
+                  <i class="bi bi-hand-thumbs-up-fill"></i> Unlike
+                  <span class="like-count ms-2">{{ post.like_users.count }}</span>
+                </button>
+                {% else %}
+                <button class="like-button fw-bold btn main-outline-btn">
+                  <i class="bi bi-hand-thumbs-up"></i> Like
+                  <span class="like-count ms-2">{{ post.like_users.count }}</span>
+                </button>
+              {% endif %} 
             </form>
           </div>
         {% else %}
-          <div class="post-likes">
-            <button class="like-button btn btn-link" disabled="">
-              <i class="bi bi-hand-thumbs-up"></i> Like
+          <div class="post-likes d-flex justify-content-center">
+            <button class="like-button btn main-btn" disabled="">
+              <i class="bi bi-hand-thumbs-up me-1"></i> Like
+              <span class="like-count">{{ post.like_users.count }}</span>
             </button>
-            <span class="like-count">{{ post.like_users.count }}</span>
           </div>
-          <p>로그인 후 좋아요를 눌러주세요.</p>
+          <p class='text-center'>로그인 후 좋아요를 눌러주세요.</p>
         {% endif %}
-      
-      </div>      
+      </div>
     </div>
 
-    <hr class="mx-auto" width="70%">
-
-    <div class="row">
-      <div class="col-8 mx-auto">
-        {% if post.comment_set.all %}
+{% comment %} <hr class='my-3'> {% endcomment %}
+{% comment %} 코멘트 반복창 {% endcomment %}
+  <div class='bg-body-tertiary border border-dark-subtle rounded'>
+    <p class="p-3">댓글 <b>{{ post.comment_set.all|length }}</b></p>
+    <div class="row p-3">
+      {% if post.comment_set.all %}
         {% for comment in post.comment_set.all %}
-        <div>
-            <p>{{ comment.content }}</p>
-            <div class='small text-end row'>
-              <p class='col-8'>{{ comment.user.username }}</p>
-              {% if user.is_authenticated %}
-                <form method="post" class="d-inline" action="{% url 'posts:comment_likes' post.pk comment.pk %}">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-link text-danger p-0 col-1">
-                    <i class="bi bi-heart{% if user in comment.like_users.all %}-fill{% endif %}"></i>
-                  </button>
-                  <input type="hidden" name="next" value="{{ request.path }}">
-                </form>
-                {% if user == comment.user %}
-                  <form method="post" class="d-inline col-1" action="{% url 'posts:comment_delete' post.pk comment.pk %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-link text-danger p-0" onclick="return confirm('정말 삭제하시겠습니까?')">
-                      <i class="bi bi-x-circle-fill"></i>
-                    </button>
-                    <input type="hidden" name="next" value="{{ request.path }}">
-                  </form>
-                {% endif %}
-              {% endif %}
+          <div class="mb-3">
+            <div>
+              <p>{{ comment.content }}</p>
             </div>
-            {% endfor %}
-        </div>
-        {% else %}
-            <p class='my-5'>아직 댓글이 없습니다.</p>
-        {% endif %}
-      </div>      
-  
-    <hr class="mx-auto" width="70%">
-  
-    {% if user.is_authenticated %}
-    <div class="row row-cols-1">
-      <div class="col-8 mx-auto">
-        <form method="post" action="{% url 'posts:comment_create' post.pk %}">
-          {% csrf_token %}
-          <div class='row d-flex justify-content-center'>
-          <div class="form-group col-9">
-            <textarea name="content" class="form-control" rows="2"></textarea>
+            <div>
+              <div class="row">
+                <div class="text-end small text-secondary">
+                  <a href="{% url 'accounts:profile' comment.user.username %}"><b>{{ comment.user.username }}</b></a>
+
+                  {% if user.is_authenticated %}
+                    <form method="post" class="d-inline" action="{% url 'posts:comment_likes' post.pk comment.pk %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-link text-danger m-1 p-0">
+                        <i class="bi bi-heart{% if user in comment.like_users.all %}-fill{% endif %}"></i>
+                      </button>
+                      <input type="hidden" name="next" value="{{ request.path }}">
+                    </form>                  
+                    
+                  {% endif %}         
+                  
+                  {% if user == comment.user %}
+                    <form method="post" class="d-inline" action="{% url 'posts:comment_delete' post.pk comment.pk %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-link text-danger m-1 p-0" onclick="return confirm('정말 삭제하시겠습니까?')">
+                        <i class="bi bi-x-circle-fill"></i>
+                      </button>
+                      <input type="hidden" name="next" value="{{ request.path }}">
+                    </form>                  
+                  {% endif %}
+                </div>
+              </div>
+            </div>
           </div>
-          <button type="submit" class="btn btn-primary col-1">제출</button>
-        </form>
-      </div>
-    </div>
-    {% else %}
-      <div class="row row-cols-1">
-        <div class="col-8 mx-auto">
-          <p>로그인 후 댓글을 작성할 수 있습니다.</p>
+        
+          {% if not forloop.last %}<hr class='my-2'>{% endif %}
+          
+          
+          {% endfor %}
+          
+      {% else %}
+        <div class="no-item py-3">
+          <i class="bi bi-emoji-dizzy"></i>
+          <p class='text-dark'>아직 작성된 댓글이 없어요.</p>
         </div>
+      {% endif %}
+    </div>      
+  </div>
+  
+
+  {% comment %} 코멘트 작성란 {% endcomment %}
+  <div class="row row-cols-1 mt-4">
+  {% if user.is_authenticated %}
+  <div class="-auto">
+    <form method="post" action="{% url 'posts:comment_create' post.pk %}">
+      {% csrf_token %}
+      <div class='row d-flex justify-content-center'>
+      <div class="form-group col-10">
+        <textarea name="content" class="form-control" rows="2"></textarea>
       </div>
-    {% endif %}
+      <button type="submit" class="btn main-btn col-2">제출</button>
+    </form>
+  </div>
+  </div>
+  {% else %}
+  <div class='row d-flex justify-content-center'>
+    <div class="form-group col-10">
+      <textarea placeholder="로그인 후 댓글을 작성할 수 있습니다." name="content" class="form-control" rows="2" disabled></textarea>
+    </div>
+    <button type="submit" class="btn main-btn col-2" disabled>제출</button>
+  {% endif %}
+
+
 {% endblock content %}

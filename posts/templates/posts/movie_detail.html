@@ -3,118 +3,104 @@
 
 {% block content %}
 <div class="d-flex">
-<div class="container my-5 text-center justify-content-end">
+  <div class="container my-5 text-center justify-content-end">
     <h2 class="mb-4">{{ title }}</h2>
     <div class="row">
-        <div class="col-md-8 mx-auto">
-          {% if poster_path %}
-          <img src="{{ poster_path }}" class="img-fluid mb-4" alt={{ title }} style="width: 600px;">
-          {% else %}
-          <img src="{% static 'no-photo.png' %}" alt='포스터가 없습니다'>
-          {% endif %}
-            <div class='row justify-content-center'>
-            <p class='col-4 my-1 p-3'><strong>개봉일자</strong></p><p class='col-6 text-start p-3 my-1'>{{ release_date }}</p>
-            <p class='col-4 my-1 p-3'><strong>장르</strong></p>
-            <p class='col-6 my-1 text-start p-3'>
-              {% for genre in genres %}
-              {{ genre.name }}{% if not forloop.last %}, {% endif %}
-              {% endfor %}
-            </p>                    
-            <p class='col-4 my-1 pt-3'><strong>줄거리</strong></p>
-            <div class='col-6 my-1 text-start p-3'>{{ overview }}</div>
-            </div>
-        
-
-        <div>
-          <p class='col-8 my-1 mx-auto pt-3'><strong>주요 출연진</strong></p>
-          <div class='col-12 my-1 mx-auto text-center p-3'>
-            <div class='row'>
-              {% for credit in credits %}
-              <div class='col-6 m-0 p-2'>
-                <div class='row'>
-                  <div style="width:150px;                   height:130px;                  overflow:hidden;                  margin:0 auto;">
-                    <img style="object-fit:cover; width:100%; height:120%;" class='col-4' src="{{ profile_path }}{{ credit.profile_path }}" alt="{{ credit.name }}">
-                  </div>
-                  <div class='col pt-4'>
-                    <p>{{ credit.name }}</p>
-                    <p class='text-secondary'>{{ credit.character }} 役</p>                  
-                  </div>
+      <div class="mx-auto col-8">
+        {% if poster_path %}
+        <img src="{{ poster_path }}" class="img-fluid mb-4" alt={{ title }} style="width: 600px;">
+        {% else %}
+        <img src="{% static 'no-photo.png' %}" alt='포스터가 없습니다' style="width: 600px;">
+        {% endif %}
+        <div class='row justify-content-center'>
+          <p class='col-3 my-1 p-3'><strong>개봉일자</strong></p>
+          <p class='col-8 text-start p-3 my-1'>{{ release_date }}</p>
+          <p class='col-3 my-1 p-3'><strong>장르</strong></p>
+          <p class='col-8 my-1 text-start p-3'>
+            {% for genre in genres %}
+            {{ genre.name }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </p>                    
+          <p class='col-3 my-1 pt-3'><strong>줄거리</strong></p>
+          <div class='col-8 my-1 text-start p-3'>{{ overview }}</div>
+        </div>
+      </div>
+      <div class='mx-auto col-8'>
+        <div class='row'>
+        <p class='my-1 mx-auto pt-3'><strong>주요 출연진</strong></p></div>
+        <div class='my-1 text-center p-3 border border-secondary-subtle rounded'>
+          <div class='row p-3' style="column-gap: 8rem;">
+            {% for credit in credits %}
+            <div class='col-5 m-0 p-2'>
+              <div class='row'>
+                <div class="p-0" style="width:130px; height:130px; overflow:hidden; margin:0 auto; border-radius: 10%;">
+                  {% if credit.profile_path %}
+                    <img style="object-fit:cover; width:100%; height:100%;" class='col-4' src="https://image.tmdb.org/t/p/w200/{{ credit.profile_path }}" alt="{{ credit.name }}">
+                  {% else %}
+                    <img style="object-fit:cover; width:100%; opacity: 0.5;" class='col-4' src="{% static 'no-photo.png' %}" alt="{{ credit.name }}">
+                  {% endif %}
                 </div>
-              </div>            
-              {% endfor %}
-            </div>
+                <div class='col pt-4'>
+                  <p>{{ credit.name }}</p>
+                  <p class='text-secondary'>{{ credit.character }} 役</p>                  
+                </div>
+              </div>
+            </div>            
+            {% endfor %}
           </div>
         </div>
-        
-        
-
-        <hr class='m-5 mx-auto' width=70%>
-        
-        <div>
+      </div>
+    
+      <div class='col-8 mx-auto my-5'>
+        <p class="text-start">후기 <b>{{ reviews|length }}</b></p>
+        <div class="wrap d-flex overflow-x-scroll p-3 ps-0 text-start">
           {% if reviews %}
-            {% for review in reviews %}
-              <div>
-                <p>{{ review.content }}</p>
-                <p>작성자: {{ review.user }}</p>
-                <p>작성일: {{ review.created_at }}</p>
-              </div>
-            {% endfor %}
-          {% else %}
-            <p>후기가 없습니다.</p>
-          {% endif %}
-        </div>
-        <div class='mt-4'>
-          <a href="{% url 'posts:create' movie_id %}" class="btn btn-primary">후기 작성</a>
-        </div>
-        
-        
-      
-
-
-
-
-{% comment %}         
-        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">
-          <div class="carousel-inner">
-            {% for review in reviews %}
-            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-              <div class="row">
-                {% for article in posts %}
-                <div class="col-md-4">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">{{ Post.title|truncatechars:10 }}</h5>
-                      <p class="card-text">{{ Post.content|truncatechars:30 }}</p>
-                      {% if Post.comments %}
-                      {% for comment in Post.comments %}
-                      <div class="card-text">
-                        <small>{{ comment.user.username }} - {{ comment.created_at }}</small>
-                        <p>{{ comment.body }}</p>
-                      </div>
-                      {% endfor %}
-                      {% else %}
-                      <div class="card-text">
-                        <small>No comments yet.</small>
-                      </div>
-                      {% endif %}
+            {% for review in reviews|dictsortreversed:"created_at" %}
+              <div class="d-flex flex-column flex-shrink-0 detail comment" style="width:260px; height: 300px">
+                <a href="{% url 'accounts:profile' review.user %}">
+                  <div class="d-flex justify-content-between">
+                    <p>{{ review.user }}</p>
+                    <div class="d-flex align-items-center bg-white border border-light-subtle rounded-pill px-2 gap-1">
+                      <i class="bi bi-star-fill"></i>
+                      <p>{{ review.score }}</p>
                     </div>
                   </div>
+                </a>
+                <hr style="color: #e5e5e5; opacity: 1;">
+                <a href="{% url 'posts:post_detail' review.pk %}" class="review-link flex-grow-1">
+                  <div class="d-flex flex-column justify-content-between h-100">
+                    <p class="fw-bold" style="-webkit-line-clamp: 1;">{{ review.title }}</p>
+                    <p>{{ review.content }}</p>
+                    <p class="date">{{ review.created_at|date:"Y-m-d" }}</p>
+                  </div>
+                </a>
+                <hr style="color: #e5e5e5; opacity: 1;">
+                <div class="d-flex gap-3" style="color: #787878; font-size: 0.875rem;">
+                  <p class="d-flex align-items-center">
+                    <i class="bi bi-hand-thumbs-up-fill me-1"></i>
+                    {{ review.like_users.count}}
+                  </p>
+                  <p class="d-flex align-items-center">
+                    <i class="bi bi-chat-fill me-1"></i>
+                    {{ review.comment_set.all|length}}
+                  </p>
                 </div>
-                {% endfor %}
               </div>
-            </div>
             {% endfor %}
-          </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
-        </div> {% endcomment %}
+          {% else %}
+            <div class="no-item">
+              <i class="bi bi-chat-right-dots"></i>
+              <p>아직 작성된 후기가 없어요.</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
 
+      <div class='mt-4'>
+        <a href="{% url 'posts:create' movie_id %}" class="btn main-btn {% if not user.is_authenticated %}disabled{% endif %}" >후기 작성</a>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock content %}
 
