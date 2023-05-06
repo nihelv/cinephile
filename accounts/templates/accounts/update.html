@@ -19,8 +19,8 @@
 <section class="accounts">
   <form action="{% url 'accounts:update' %}" method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="회원정보 수정">
+    <div class='my-3'>{{ form.as_p }}</div>
+    <input class='btn btn-primary w-100' type="submit" value="회원정보 수정">
   </form>
 </section>
 {% endblock content %}

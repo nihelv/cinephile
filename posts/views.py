@@ -110,15 +110,38 @@ def index(request):
 
     upcoming_response = requests.get(upcoming_url, params=params)
     upcoming_data = upcoming_response.json()
-    upcoming = sorted(upcoming_data['results'], key=lambda x:x['release_date'])[:5]
+    upcoming_movies = sorted(upcoming_data['results'], key=lambda x:x['release_date'])[:5]
     current_date = datetime.date.today()
+
+    upcoming_movies_dict = {0: {}, 1: {}, 2: {}, 3: {}, 4: {}}
+
+    for i in range(5):
+        movie_id = upcoming_movies[i]['id']
+        upcoming_movies_dict[i]['id'] = upcoming_movies[i]['id']
+        upcoming_movies_dict[i]['poster_path'] = upcoming_movies[i]['poster_path']
+        upcoming_movies_dict[i]['title'] = upcoming_movies[i]['title']
+        upcoming_movies_dict[i]['genre_ids'] = upcoming_movies[i]['genre_ids']
+
+        release_dates_url = f'https://api.themoviedb.org/3/movie/{movie_id}/release_dates?api_key={TMDB_API_KEY}'
+        release_dates_response = requests.get(release_dates_url)
+        release_data = release_dates_response.json()
+
+        for data in release_data['results']:
+            if data["iso_3166_1"] == "KR":
+                release_date = data["release_dates"][-1].get("release_date")
+                break
+
+        year = int(release_date[:4])
+        month = int(release_date[5:7])
+        day = int(release_date[8:10])
+        upcoming_movies_dict[i]['day'] = (datetime.date(year, month, day) - datetime.date.today()).days
 
     context = {
         'now_playing': now_playing,
         'top_rated': top_rated,
         'genre_movie_list': genre_movie_list,
         'random_movie': random_movie,
-        'upcoming': upcoming,
+        'upcoming_movies_dict': upcoming_movies_dict,
         'current_date': current_date,
         'genre_dict': genre_dict,
         'login_form': CustomAuthenticationForm(),
