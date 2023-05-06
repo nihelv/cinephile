@@ -449,10 +449,6 @@ img {
   color: #9e9e9e;
 }
 
-.rating {
-  color: black;
-}
-
 .bi-star-fill {
   margin-right: 0.125rem;
   font-size: 0.85rem;
@@ -523,7 +519,7 @@ img {
 
 .no-poster {
   position: relative;
-  height: 390px;
+  height: 400px;
   background-color: #f3f3f3;
   border-radius: 0.5rem;
   overflow: hidden;
@@ -547,7 +543,7 @@ img {
   flex-direction: column;
 }
 
-/* .movie-info .search:before {
+.search .rating:before {
   content: "";
   position: absolute;
   top: 25%;
@@ -556,13 +552,15 @@ img {
   width: 1px;
   height: 12px;
   background-color: #e0e0e0;
-} */
+}
 
 .rating {
   position: relative;
   display: flex;
   align-items: center;
   gap: 0.125rem;
+  padding-left: 1.5rem;
+  color: black;
 }
 
 /* 인물 검색 */

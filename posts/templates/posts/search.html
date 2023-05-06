@@ -7,7 +7,7 @@
 {% endblock title %}
 
 {% block content %}
-  <section class="search container">
+  <section class="search container" style="min-height: 460px;">
     {% if movie_search_data.results %}
       <p class="result-count">검색결과 <b>{{ movie_search_data.results|length }}건</b></p>
       <div class="movie-group">

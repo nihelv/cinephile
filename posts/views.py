@@ -154,45 +154,105 @@ def index(request):
 def search(request):
     TMDB_API_KEY = 'caea966f6e10b1fbcfc446cd0052d5cd'
 
-    movie_title = request.GET.get('title')
+    query = request.GET.get('query')
 
-    url ='https://api.themoviedb.org/3/search/movie'
+    movie_url = 'https://api.themoviedb.org/3/search/movie'
+    person_url = 'https://api.themoviedb.org/3/search/person'
 
-    params = {
+    movie_params = {
         'api_key': TMDB_API_KEY,
-        'query': movie_title,
+        'query': query,
         'language': 'ko-kr',
     }
 
-    response = requests.get(url, params=params)
-    search_data = response.json()
+    person_params = {
+        'api_key': TMDB_API_KEY,
+        'query': query,
+        'language': 'ko-kr',
+    }
 
-    image_url = 'https://image.tmdb.org/t/p/w200' # w로 사이즈 조절
-    for movie in search_data['results']:
+    movie_response = requests.get(movie_url, params=movie_params)
+    person_response = requests.get(person_url, params=person_params)
+
+    movie_search_data = movie_response.json()
+    person_search_data = person_response.json()
+
+    movie_image_url = 'https://image.tmdb.org/t/p/w200'  # w로 사이즈 조절
+    for movie in movie_search_data['results']:
         if movie['poster_path']:
-            movie['poster_path'] = image_url + movie['poster_path']
+            movie['poster_path'] = movie_image_url + movie['poster_path']
 
+    person_image_url = 'https://image.tmdb.org/t/p/w200'
+    for person in person_search_data['results']:
+        if person.get('profile_path'):
+            person['profile_path'] = person_image_url + person['profile_path']
+
+    
+    # 검색한 배우의 출연 영화 목록
+    movies_cast = []
+    movie_posters = []
+
+    if 'results' in person_search_data and person_search_data['results']:
+        for person in person_search_data['results']:
+            if person.get('profile_path'):
+                person_id = person['id']
+                credit_url = f"https://api.themoviedb.org/3/person/{person_id}/movie_credits"
+                credit_params = {
+                    'api_key': TMDB_API_KEY,
+                    'language': 'ko-kr',
+                }
+                credit_response = requests.get(credit_url, params=credit_params)
+                credit_data = credit_response.json()
+
+                if 'cast' in credit_data:
+                    sorted_actor_movies = sorted(credit_data['cast'], key=lambda x: x['release_date'], reverse=True)
+
+                    movies = []
+                    for actor_movie in sorted_actor_movies:
+                        if len(movies) >= 4:
+                            break
+
+                        if actor_movie.get('poster_path'):
+                            actor_movie_image_url = 'https://image.tmdb.org/t/p/w200'
+                            actor_movie['poster_path'] = actor_movie_image_url + actor_movie['poster_path']
+                            movie_posters.append(actor_movie)
+                            movies.append(actor_movie['title'])
+
+                    if movies:
+                        person_name = person['name']
+                        is_check = False
+                        for cast in movies_cast:
+                            if cast['person_name'] == person_name:
+                                is_check = True
+                                break
+
+                        if not is_check:
+                            movies_cast.append({
+                                'person_name': person_name,
+                                'movies': movies,
+                            })
 
     # 최신순 정렬
-    sorted_movie = sorted(search_data['results'], key=lambda x:x['release_date'], reverse=True)
+    sorted_movies = sorted(movie_search_data['results'], key=lambda x: x['release_date'], reverse=True)
 
     # 페이지네이션
-    page = request.GET.get('page', '1')
-    per_page = 20
-    paginator = Paginator(sorted_movie, per_page)
-    posts = paginator.get_page(page)
+    movie_page = request.GET.get('page', '1')
+    per_page = 12
+    paginator = Paginator(sorted_movies, per_page)
+    movies = paginator.get_page(movie_page)
 
     # 검색 기록 가져오기
     # search_history = Search_history.objects.filter(user=request.user).order_by('-history')[:5]
 
     # if movie_title and not Search_history.objects.filter(search=movie_title, user=request.user).exists():
     #     Search_history.objects.create(search=movie_title, user=request.user)
-
     context = {
-        'search_data': search_data,
-        'posts': posts,
-        'movie_title': movie_title,
-        # 'search_history': search_history,
+        'movie_search_data': movie_search_data,
+        'person_search_data': person_search_data,
+        'movies': movies,
+        'query': query,
+        'movies_cast': movies_cast,
+        'movie_posters': movie_posters,
     }
 
     return render(request, 'posts/search.html', context)
