@@ -205,6 +205,7 @@ def search(request):
                 credit_response = requests.get(credit_url, params=credit_params)
                 credit_data = credit_response.json()
 
+                movies = []
                 if 'cast' in credit_data:
                     sorted_actor_movies = sorted(credit_data['cast'], key=lambda x: x['release_date'], reverse=True)
 
