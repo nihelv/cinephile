@@ -67,7 +67,6 @@ def signup(request):
 
 
 # 프로필 view
-@login_required
 def profile(request, username):
     User = get_user_model()
     person = User.objects.get(username=username)
