@@ -20,7 +20,10 @@
             <i class="bi bi-pencil-square"></i>      
           </a>
           <a class='ms-1 px-1' href="{% url 'posts:delete' post.pk %}">
-            <i class="bi bi-trash"></i>
+            <button type="submit" class="btn btn-link text-danger m-1 p-0" onclick="return confirm('정말 삭제하시겠습니까?')">
+              <i class="bi bi-trash"></i>
+            </button>
+            
           </a>
         </div>
         {% endif %}
