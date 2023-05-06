@@ -27,10 +27,14 @@
               <h3 class="movie-title">{{ movie.title }}</h3>
               <div class="d-flex">
                 <div class="movie-category">
+                  {% if movie.genre_ids %}
                   <span># {{ genre_dict|get_genre_name:movie.genre_ids.0 }}</span>
-                  {% if movie.genre_ids.1 %}
+                  {% if movie.genre_ids|length > 1 %}
                     <span># {{ genre_dict|get_genre_name:movie.genre_ids.1 }}</span>
                   {% endif %}
+                {% else %}
+                  <span># 장르 없음</span>
+                {% endif %}
                 </div>
                 <span class="search rating"><i class="bi bi-star-fill"></i>{{ movie.vote_average|floatformat }}</span>
               </div>
