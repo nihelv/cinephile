@@ -40,7 +40,7 @@ def index(request):
     top_rated_data = top_rated_response.json()
     top_rated = sorted(top_rated_data['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
     
-    #장르 번호를 딕셔너리로 만들어두었으니 활용하시면 됩니다.
+    # 장르 번호를 딕셔너리로 만들어두었으니 활용하시면 됩니다.
     genre_dict = {
         28: '액션',
         12: '모험',
@@ -110,37 +110,15 @@ def index(request):
 
     upcoming_response = requests.get(upcoming_url, params=params)
     upcoming_data = upcoming_response.json()
-    upcoming_movies = sorted(upcoming_data['results'], key=lambda x:x['release_date'])[:5]
+    upcoming = sorted(upcoming_data['results'], key=lambda x:x['release_date'])[:5]
     current_date = datetime.date.today()
-    upcoming_movies_dict = {0: {}, 1: {}, 2: {}, 3: {}, 4: {}}
-
-    for i in range(5):
-        movie_id = upcoming_movies[i]['id']
-        upcoming_movies_dict[i]['id'] = upcoming_movies[i]['id']
-        upcoming_movies_dict[i]['poster_path'] = upcoming_movies[i]['poster_path']
-        upcoming_movies_dict[i]['title'] = upcoming_movies[i]['title']
-        upcoming_movies_dict[i]['genre_ids'] = upcoming_movies[i]['genre_ids']
-
-        release_dates_url = f'https://api.themoviedb.org/3/movie/{movie_id}/release_dates?api_key={TMDB_API_KEY}'
-        release_dates_response = requests.get(release_dates_url)
-        release_data = release_dates_response.json()
-
-        for data in release_data['results']:
-            if data["iso_3166_1"] == "KR":
-                release_date = data["release_dates"][-1].get("release_date")
-                break
-        
-        year = int(release_date[:4])
-        month = int(release_date[5:7])
-        day = int(release_date[8:10])
-        upcoming_movies_dict[i]['day'] = (datetime.date(year, month, day) - datetime.date.today()).days
 
     context = {
         'now_playing': now_playing,
         'top_rated': top_rated,
         'genre_movie_list': genre_movie_list,
         'random_movie': random_movie,
-        'upcoming_movies_dict': upcoming_movies_dict,
+        'upcoming': upcoming,
         'current_date': current_date,
         'genre_dict': genre_dict,
         'login_form': CustomAuthenticationForm(),
@@ -153,128 +131,58 @@ def index(request):
 def search(request):
     TMDB_API_KEY = 'caea966f6e10b1fbcfc446cd0052d5cd'
 
-    query = request.GET.get('query')
+    movie_title = request.GET.get('title')
 
-    movie_url = 'https://api.themoviedb.org/3/search/movie'
-    person_url = 'https://api.themoviedb.org/3/search/person'
+    url ='https://api.themoviedb.org/3/search/movie'
 
-    movie_params = {
+    params = {
         'api_key': TMDB_API_KEY,
-        'query': query,
+        'query': movie_title,
         'language': 'ko-kr',
     }
 
-    person_params = {
-        'api_key': TMDB_API_KEY,
-        'query': query,
-        'language': 'ko-kr',
-    }
+    response = requests.get(url, params=params)
+    search_data = response.json()
 
-    movie_response = requests.get(movie_url, params=movie_params)
-    person_response = requests.get(person_url, params=person_params)
-
-    movie_search_data = movie_response.json()
-    person_search_data = person_response.json()
-
-    movie_image_url = 'https://image.tmdb.org/t/p/w200'  # w로 사이즈 조절
-    for movie in movie_search_data['results']:
+    image_url = 'https://image.tmdb.org/t/p/w200' # w로 사이즈 조절
+    for movie in search_data['results']:
         if movie['poster_path']:
-            movie['poster_path'] = movie_image_url + movie['poster_path']
+            movie['poster_path'] = image_url + movie['poster_path']
 
-    person_image_url = 'https://image.tmdb.org/t/p/w200'
-    for person in person_search_data['results']:
-        if person.get('profile_path'):
-            person['profile_path'] = person_image_url + person['profile_path']
-
-    
-    # 검색한 배우의 출연 영화 목록
-    movies_cast = []
-    movie_posters = []
-    movies = []
-
-    if 'results' in person_search_data and person_search_data['results']:
-        for person in person_search_data['results']:
-            if person.get('profile_path'):
-                person_id = person['id']
-                credit_url = f"https://api.themoviedb.org/3/person/{person_id}/movie_credits"
-                credit_params = {
-                    'api_key': TMDB_API_KEY,
-                    'language': 'ko-kr',
-                }
-                credit_response = requests.get(credit_url, params=credit_params)
-                credit_data = credit_response.json()
-
-                if 'cast' in credit_data:
-                    sorted_actor_movies = sorted(credit_data['cast'], key=lambda x: x['release_date'], reverse=True)
-
-                    for actor_movie in sorted_actor_movies:
-                        if len(movies) >= 4:
-                            break
-
-                        if actor_movie.get('poster_path'):
-                            actor_movie_image_url = 'https://image.tmdb.org/t/p/w200'
-                            actor_movie['poster_path'] = actor_movie_image_url + actor_movie['poster_path']
-                            movie_posters.append(actor_movie)
-                            movies.append(actor_movie['title'])
-
-                    if movies:
-                        person_name = person['name']
-                        is_check = False
-                        for cast in movies_cast:
-                            if cast['person_name'] == person_name:
-                                is_check = True
-                                break
-
-                        if not is_check:
-                            movies_cast.append({
-                                'person_name': person_name,
-                                'movies': movies,
-                            })
 
     # 최신순 정렬
-    sorted_movies = sorted(movie_search_data['results'], key=lambda x: x['release_date'], reverse=True)
+    sorted_movie = sorted(search_data['results'], key=lambda x:x['release_date'], reverse=True)
 
     # 페이지네이션
     page = request.GET.get('page', '1')
-    per_page = 12
-    paginator = Paginator(sorted_movies, per_page)
+    per_page = 20
+    paginator = Paginator(sorted_movie, per_page)
     posts = paginator.get_page(page)
 
-    # 장르
-    genre_dict = {
-        28: '액션',
-        12: '모험',
-        16: '애니메이션',
-        35: '코미디',
-        80: '범죄',
-        99: '다큐멘터리',
-        18: '드라마',
-        10751: '가족',
-        14: '판타지',
-        36: '역사',
-        27: '공포',
-        10402: '음악',
-        9648: '미스터리',
-        10749: '로맨스',
-        878: 'SF',
-        10770: 'TV 영화',
-        53: '스릴러',
-        10752: '전쟁',
-        37: '서부'
-    }
+    # 검색 기록 가져오기
+    # search_history = Search_history.objects.filter(user=request.user).order_by('-history')[:5]
+
+    # if movie_title and not Search_history.objects.filter(search=movie_title, user=request.user).exists():
+    #     Search_history.objects.create(search=movie_title, user=request.user)
 
     context = {
-        'movie_search_data': movie_search_data,
-        'person_search_data': person_search_data,
+        'search_data': search_data,
         'posts': posts,
-        'movies': movies,
-        'query': query,
-        'movies_cast': movies_cast,
-        'movie_posters': movie_posters,
-        'genre_dict': genre_dict,
+        'movie_title': movie_title,
+        # 'search_history': search_history,
     }
 
     return render(request, 'posts/search.html', context)
+
+
+# # 현재 사용자의 모든 검색 기록을 삭제
+# def search_delete(request):
+#     if request.method == 'POST':
+#         search_id = request.POST.get('search_id')
+#         Search_history.objects.filter(id=search_id, user=request.user).delete()
+#     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+#     # return redirect('posts:search')
+
 
 
 # 영화 상세정보와 그 영화에 쓰인 후기글을 보여줌
@@ -333,6 +241,8 @@ def movie_detail(request, movie_id):
 
     return render(request, 'posts/movie_detail.html', context)
 
+
+
 def post_detail(request, post_pk):
     post = Post.objects.get(pk=post_pk)
     context = {
@@ -387,15 +297,17 @@ def update(request, post_pk):
         return redirect('posts:post_detail', post.pk)
     context = {
         'form': form,
+        'post': post,
     }
     return render(request, 'posts/update.html', context)
 
 
 def delete(request, post_pk):
     post = Post.objects.get(pk=post_pk)
+    movie_id = post.movie_id
     if request.user == post.user:
         post.delete()
-        return redirect('posts:movie_detail')
+        return redirect('posts:movie_detail', movie_id)
 
 
 @login_required
@@ -431,7 +343,7 @@ def comment_delete(request, post_pk, comment_pk):
 
 @login_required
 def comment_likes(request, post_pk, comment_pk):
-    comment = Post.objects.get(pk=comment_pk)
+    comment = Comment.objects.get(pk=comment_pk)
     if request.user in comment.like_users.all():
         comment.like_users.remove(request.user)
     else:
