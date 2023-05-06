@@ -333,6 +333,14 @@ def movie_detail(request, movie_id):
 
     return render(request, 'posts/movie_detail.html', context)
 
+def post_detail(request, post_pk):
+    post = Post.objects.get(pk=post_pk)
+    context = {
+        'post': post,
+        'form': CommentForm()
+    }
+    return render(request, 'posts/post_detail.html', context)
+
 
 @login_required
 def create(request, movie_id):
