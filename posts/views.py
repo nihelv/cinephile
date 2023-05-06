@@ -40,7 +40,7 @@ def index(request):
     top_rated_data = top_rated_response.json()
     top_rated = sorted(top_rated_data['results'], key=lambda x:x['vote_average'], reverse=True)[:5]
     
-    # 장르 번호를 딕셔너리로 만들어두었으니 활용하시면 됩니다.
+    #장르 번호를 딕셔너리로 만들어두었으니 활용하시면 됩니다.
     genre_dict = {
         28: '액션',
         12: '모험',
@@ -190,6 +190,7 @@ def search(request):
     # 검색한 배우의 출연 영화 목록
     movies_cast = []
     movie_posters = []
+    movies = []
 
     if 'results' in person_search_data and person_search_data['results']:
         for person in person_search_data['results']:
@@ -206,7 +207,6 @@ def search(request):
                 if 'cast' in credit_data:
                     sorted_actor_movies = sorted(credit_data['cast'], key=lambda x: x['release_date'], reverse=True)
 
-                    movies = []
                     for actor_movie in sorted_actor_movies:
                         if len(movies) >= 4:
                             break
@@ -235,10 +235,10 @@ def search(request):
     sorted_movies = sorted(movie_search_data['results'], key=lambda x: x['release_date'], reverse=True)
 
     # 페이지네이션
-    movie_page = request.GET.get('page', '1')
+    page = request.GET.get('page', '1')
     per_page = 12
     paginator = Paginator(sorted_movies, per_page)
-    movies = paginator.get_page(movie_page)
+    posts = paginator.get_page(page)
 
     # 장르
     genre_dict = {
@@ -266,6 +266,7 @@ def search(request):
     context = {
         'movie_search_data': movie_search_data,
         'person_search_data': person_search_data,
+        'posts': posts,
         'movies': movies,
         'query': query,
         'movies_cast': movies_cast,

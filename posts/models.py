@@ -24,9 +24,3 @@ class Comment(models.Model):
     
     def get_movie_title(self):
         return self.post.movie_title
-
-
-# class Search_history(models.Model):
-#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     search = models.CharField(max_length=50)
-#     history = models.DateTimeField(auto_now_add=True)

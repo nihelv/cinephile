@@ -1,5 +1,4 @@
 import requests
-from .models import genre_dict
 
 # 실시간 인기 영화 검색어
 def trending_movies(request):
