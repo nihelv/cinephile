@@ -13,6 +13,9 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_posts')
     poster_path = models.CharField(max_length=200)
+    movie_overview = models.CharField(max_length=200)
+    movie_release_date = models.CharField(max_length=200)
+
 
 
 class Comment(models.Model):

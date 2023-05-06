@@ -269,6 +269,8 @@ def create(request, movie_id):
             post.user = request.user
             post.poster_path = poster_path
             post.movie_title = movie_data.get('title')
+            post.movie_overview = movie_data.get('overview')
+            post.movie_release_date = movie_data.get('release_date')
             score = float(request.POST['score'])
             post.score = score
             post.save()
