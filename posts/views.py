@@ -8,11 +8,14 @@ from django.core.paginator import Paginator
 # from django.http import HttpResponseRedirect
 import requests
 import random, datetime
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+TMDB_API_KEY = os.environ.get('TMDB_API_KEY')
 
 def index(request):
-    TMDB_API_KEY = 'caea966f6e10b1fbcfc446cd0052d5cd' 
-
     # 최신 상영작을 평점 순으로 나열하여 5개만 불러옵니다.
     now_playing_url = 'https://api.themoviedb.org/3/movie/now_playing'
 
@@ -152,8 +155,6 @@ def index(request):
 
 # tmdb API를 이용하여 검색한 결과를 가져와 상세정보 출력
 def search(request):
-    TMDB_API_KEY = 'caea966f6e10b1fbcfc446cd0052d5cd'
-
     query = request.GET.get('query')
 
     movie_url = 'https://api.themoviedb.org/3/search/movie'
@@ -280,7 +281,6 @@ def search(request):
 
 # 영화 상세정보와 그 영화에 쓰인 후기글을 보여줌
 def movie_detail(request, movie_id):
-    TMDB_API_KEY = 'caea966f6e10b1fbcfc446cd0052d5cd'
     url = f'https://api.themoviedb.org/3/movie/{movie_id}?api_key={TMDB_API_KEY}&language=ko-KR'
     response = requests.get(url)
     movie_data = response.json()
@@ -347,7 +347,6 @@ def post_detail(request, post_pk):
 
 @login_required
 def create(request, movie_id):
-    TMDB_API_KEY = 'caea966f6e10b1fbcfc446cd0052d5cd'
     url = f'https://api.themoviedb.org/3/movie/{movie_id}?api_key={TMDB_API_KEY}&language=ko-KR'
     response = requests.get(url)
     movie_data = response.json()
