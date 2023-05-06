@@ -34,7 +34,7 @@
                   {% if request.user in person.followers.all %}
                     <input type="submit" value="언팔로우" class="btn main-outline-btn fw-bold">
                   {% else %}
-                    <input type="submit" value="팔로우" class="btn main-btn fw-bold">
+                    <input type="submit" value="팔로우" class="btn main-btn fw-bold {% if not user.is_authenticated %}disabled{% endif %}">
                   {% endif %}
                 </form>
               </div>

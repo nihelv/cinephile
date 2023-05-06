@@ -47,7 +47,7 @@
     $("#rating-stars").rateYo({
       starWidth: "20px",
       spacing: "5px",
-      rating: 0,
+      rating: {{ post.score }},
       halfStar: true,
       precision: 2,
       onSet: function(rating, rateYoInstance) {
