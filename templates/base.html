@@ -29,21 +29,6 @@
         <input class="form-control me-2" type="search" name="query" placeholder="제목, 인물을 검색해보세요." aria-label="Search" value="{{ query }}">
       </form>
 
-      {% comment %} 사용자 검색 기록
-      {% if search_history %}
-          <ul>
-            {% for history in search_history %}
-              <li>{{ history.search }}
-                <form method="POST" action="{% url 'posts:search_delete' %}">
-                  {% csrf_token %}
-                  <input type="hidden" name="search_id" value="{{ history.id }}">
-                  <button type="submit" class="btn-close" aria-label="Close"></button>
-                </form>
-              </li>
-            {% endfor %}
-          </ul>
-      {% endif %}{% endcomment %}
-
       <div class="nav-right">
         {% if user.is_authenticated %}
           <a href="{% url 'accounts:profile' user %}">마이페이지</a>
