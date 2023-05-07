@@ -1,0 +1,68 @@
+[
+{
+    "model": "accounts.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$260000$St0pxMtnmA80ymrwqAc87R$ugmo1Ys1ujnnuXRZcuxUn67H31iNzgrf+/Fx8oihDug=",
+        "last_login": "2023-05-07T16:59:17.621",
+        "is_superuser": false,
+        "username": "rloldl",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2023-05-07T16:59:17.519",
+        "groups": [],
+        "user_permissions": [],
+        "followings": [
+            2,
+            3
+        ]
+    }
+},
+{
+    "model": "accounts.user",
+    "pk": 2,
+    "fields": {
+        "password": "pbkdf2_sha256$260000$5F5z6pfT71enmR6rKTOwT1$JuPgMEIOZrP1w81iivHPUanSAw9AWq4Eply6XRMF8wA=",
+        "last_login": "2023-05-07T17:00:09.977",
+        "is_superuser": false,
+        "username": "go13209",
+        "first_name": "규리",
+        "last_name": "김",
+        "email": "go13209@naver.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2023-05-07T17:00:09.889",
+        "groups": [],
+        "user_permissions": [],
+        "followings": [
+            1,
+            3
+        ]
+    }
+},
+{
+    "model": "accounts.user",
+    "pk": 3,
+    "fields": {
+        "password": "pbkdf2_sha256$260000$55DJegts4I69RbTuHBfixG$LWId76qidc2Ru0FFz2koe2WQfwUNfrQGeMAZj0EGTk0=",
+        "last_login": "2023-05-07T17:00:25.092",
+        "is_superuser": false,
+        "username": "qud6330",
+        "first_name": "용주",
+        "last_name": "도",
+        "email": "qud6330@naver.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2023-05-07T17:00:24.998",
+        "groups": [],
+        "user_permissions": [],
+        "followings": [
+            1,
+            2
+        ]
+    }
+}
+]
