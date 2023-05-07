@@ -26,7 +26,18 @@ li {
 }
 
 main {
+  min-height: 580px;
   padding-bottom: 3rem;
+}
+
+.person .movie-info::-webkit-scrollbar, .reviews::-webkit-scrollbar, #followingModal .modal-body::-webkit-scrollbar, #followerModal .modal-body::-webkit-scrollbar, .review-group .wrap::-webkit-scrollbar {
+  height: 3px;
+  background-color: transparent;
+}
+
+.person .movie-info::-webkit-scrollbar-thumb, .reviews::-webkit-scrollbar-thumb, #followingModal .modal-body::-webkit-scrollbar-thumb, #followerModal .modal-body::-webkit-scrollbar-thumb, .review-group .wrap::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .container {
@@ -588,16 +599,6 @@ img {
   overflow-x: scroll;
 }
 
-.person .movie-info::-webkit-scrollbar {
-  height: 3px;
-  background-color: transparent;
-}
-
-.person .movie-info::-webkit-scrollbar-thumb {
-  border-radius: 20px;
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
 .person-movie-list {
   display: flex;
   width: 100%;
@@ -824,19 +825,9 @@ a .user-image {
   overflow-x: scroll;
 }
 
-.review-group .wrap::-webkit-scrollbar {
-  height: 3px;
-  background-color: transparent;
-}
-
-.review-group .wrap::-webkit-scrollbar-thumb {
-  border-radius: 20px;
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
 .review .movie-poster {
   width: 100%;
-  height: auto;
+  height: 245px;
 }
 
 .review-info {
